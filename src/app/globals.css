@@ -2,170 +2,58 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
 
 @theme inline {
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
+
   --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+
+  --color-success: #A8D5BA;
+
 }
 
-/* ────────────────────────────────────────────────
-   Light mode – Teal & Stone palette
-───────────────────────────────────────────────── */
+
 :root {
-  --background: oklch(98% 0.006 200);         /* very pale cool gray-beige / light sea mist */
-  --foreground: oklch(22% 0.025 240);         /* deep cool charcoal-gray with slight blue tint */
+  --background: #FAFAF7;
+  --foreground: #1F2937;
 
-  --card: oklch(99% 0.008 195);               /* near-white with faint teal undertone */
-  --card-foreground: var(--foreground);
+  --card: #FFFFFF;
+  --card-foreground: #1F2937;
 
-  --popover: var(--card);
-  --popover-foreground: var(--foreground);
+  --popover: #FFFFFF;
+  --popover-foreground: #1F2937;
 
-  --primary: oklch(70% 0.11 190);             /* muted teal / seafoam – main calm & clarity color */
-  --primary-foreground: oklch(98% 0.005 200); /* very light off-white text */
+  --primary: #8EC5FC;
+  --primary-foreground: #FFFFFF;
 
-  --accent: oklch(80% 0.08 70);               /* soft warm taupe / stone beige – gentle grounding warmth */
-  --accent-foreground: oklch(22% 0.025 240);
+  --secondary: #DCCCFD;
+  --secondary-foreground: #1F2937;
 
-  --secondary: oklch(94% 0.01 200);           /* very pale cool neutral */
-  --secondary-foreground: var(--foreground);
+  --accent: #FFD6BA;
+  --accent-foreground: #1F2937;
 
-  --muted: oklch(96% 0.008 195);              /* subtle teal-muted neutral */
-  --muted-foreground: oklch(58% 0.03 220);
+  --muted: #F5F5F5;
+  --muted-foreground: #6B7280;
 
-  --border: oklch(90% 0.012 195);             /* very light teal-gray */
-  --input: var(--border);
-  --ring: oklch(70% 0.11 190);                /* matches primary for focus rings */
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #8EC5FC;
 
-  --destructive: oklch(60% 0.16 30);          /* muted deep brick – only for errors/warnings */
-
-  /* Charts / mood trends – teal to stone progression */
-  --chart-1: oklch(74% 0.10 190);             /* teal */
-  --chart-2: oklch(70% 0.09 210);             /* deeper sea blue-teal */
-  --chart-3: oklch(72% 0.07 70);              /* soft taupe/stone */
-  --chart-4: oklch(78% 0.06 80);              /* warm neutral transition */
-  --chart-5: oklch(84% 0.008 195);            /* light sea mist */
-
-  /* Sidebar (counselor side – slightly more structured) */
-  --sidebar: oklch(98.5% 0.005 200);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--accent);
-  --sidebar-accent-foreground: var(--accent-foreground);
-  --sidebar-border: oklch(92% 0.01 195);
-  --sidebar-ring: var(--ring);
-
-  --radius: 0.75rem;                          /* rounded enough for calm feel */
+  --radius: 1rem;
 }
 
-/* ────────────────────────────────────────────────
-   Dark mode – gentle & readable
-───────────────────────────────────────────────── */
-.dark {
-  --background: oklch(13% 0.018 220);         /* deep soft navy-teal */
-  --foreground: oklch(92% 0.008 200);         /* soft light seafoam-white */
+body {
+  @apply antialiased text-foreground;
 
-  --card: oklch(18% 0.02 215);
-  --card-foreground: var(--foreground);
-
-  --popover: var(--card);
-  --popover-foreground: var(--foreground);
-
-  --primary: oklch(76% 0.12 190);             /* brighter teal for visibility */
-  --primary-foreground: oklch(13% 0.018 220);
-
-  --accent: oklch(82% 0.09 70);               /* warmer stone/taupe accent */
-  --accent-foreground: oklch(13% 0.018 220);
-
-  --secondary: oklch(22% 0.02 220);
-  --secondary-foreground: var(--foreground);
-
-  --muted: oklch(25% 0.018 215);
-  --muted-foreground: oklch(68% 0.025 200);
-
-  --border: oklch(28% 0.025 215);
-  --input: var(--border);
-  --ring: var(--primary);
-
-  --destructive: oklch(66% 0.18 30);
-
-  --chart-1: oklch(80% 0.11 190);
-  --chart-2: oklch(76% 0.10 210);
-  --chart-3: oklch(78% 0.08 70);
-  --chart-4: oklch(82% 0.07 80);
-  --chart-5: oklch(86% 0.01 195);
-
-  --sidebar: oklch(18% 0.02 215);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--accent);
-  --sidebar-accent-foreground: var(--accent-foreground);
-  --sidebar-border: oklch(30% 0.025 215);
-  --sidebar-ring: var(--ring);
-}
-
-/* ────────────────────────────────────────────────
-   Base layer
-───────────────────────────────────────────────── */
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
-  html {
-    @apply font-sans;
-  }
-}
-
-/* Reduced motion preference */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
+  background:
+    linear-gradient(
+      180deg,
+      #FAFAF7 0%,
+      #F4F7FF 50%,
+      #FAFAF7 100%
+    );
 }
