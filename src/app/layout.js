@@ -1,6 +1,7 @@
 // src/app/layout.jsx
 import './globals.css';
 import { Inter } from 'next/font/google';
+import Providers from "@/components/Providers";
 
 const inter = Inter({
   subsets: ['latin'],
@@ -16,10 +17,18 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({ children }) {
+
+
+export default function RootLayout({
+  children,
+}) {
   return (
-    <html lang="en" className={`${inter.variable} font-sans`}>
-      <body>{children}</body>
+    <html lang="en">
+      <body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
     </html>
   );
 }
