@@ -1,7 +1,71 @@
-export default function Dashboard() {
+import { getServerSession } from "next-auth";
+
+import { authOptions } from "@/lib/auth";
+import { connectDB } from "@/lib/mongodb";
+import { getTodaysThought } from "@/lib/getTodaysThought";
+
+import PatientProfile from "@/models/PatientProfile";
+
+export default async function DashboardPage() {
+  const session = await getServerSession(authOptions);
+
+  await connectDB();
+
+  const profile = await PatientProfile.findOne({
+    userId: session.user.id,
+  }).lean();
+
+  const todaysThought = await getTodaysThought();
+
   return (
-    <h1>
-      Patient Dashboard
-    </h1>
+    <div>
+      <h1 className="text-4xl font-bold">
+        Welcome Back, {profile?.anonymousName} 👋
+      </h1>
+
+      <p className="mt-2 text-muted-foreground">
+        Here&apos;s an overview of your wellness journey.
+      </p>
+
+      <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        <div className="rounded-3xl border bg-card p-6">
+          <h3 className="font-semibold">Today&apos;s Positive Thought</h3>
+
+          <p className="mt-3 text-muted-foreground">
+            {todaysThought}
+          </p>
+        </div>
+
+        <div className="rounded-3xl border bg-card p-6">
+          <h3 className="font-semibold">Mood Check-In</h3>
+
+          <p className="mt-3">How are you feeling today?</p>
+        </div>
+
+        <div className="rounded-3xl border bg-card p-6">
+          <h3 className="font-semibold">Journal</h3>
+
+          <p className="mt-3">Write today&apos;s thoughts.</p>
+        </div>
+
+        <div className="rounded-3xl border bg-card p-6">
+          <h3 className="font-semibold">Community</h3>
+
+          <p className="mt-3">Connect with others.</p>
+        </div>
+
+        <div className="rounded-3xl border bg-card p-6">
+          <h3 className="font-semibold">Assigned Counselor</h3>
+
+          <p className="mt-3">Not assigned yet.</p>
+        </div>
+
+        <div className="rounded-3xl border bg-card p-6">
+          <h3 className="font-semibold">Upcoming Appointment</h3>
+
+          <p className="mt-3">No appointments scheduled.</p>
+        </div>
+      </div>
+    </div>
   );
 }
