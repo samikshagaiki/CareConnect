@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from "react";
 
+
 export default function CounselorDashboard() {
   const [requests, setRequests] =
     useState([]);
+
+    const [
+  upcomingAppointments,
+  setUpcomingAppointments,
+] = useState([]);
 
   async function fetchRequests() {
     try {
@@ -54,9 +60,37 @@ async function rejectRequest(
 
 }
 
+async function fetchUpcomingAppointments() {
+  try {
+    const response =
+      await fetch(
+        "/api/counselor/upcoming-appointments"
+      );
+
+    const data =
+      await response.json();
+
+    if (data.success) {
+      setUpcomingAppointments(
+        data.appointments
+      );
+    }
+
+    console.log(
+  "Upcoming Appointments:",
+  data
+);
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+
   useEffect(() => {
-    fetchRequests();
-  }, []);
+  fetchRequests();
+  fetchUpcomingAppointments();
+}, []);
 
  return (
   <div>
@@ -119,10 +153,63 @@ async function rejectRequest(
                 Reject
               </button>
             </div>
+
+  
+
           </div>
         ))
+
+        
       )}
     </div>
+
+              <p>
+  Total Upcoming:
+  {upcomingAppointments.length}
+</p>
+
+            <div className="mt-12">
+  <h2 className="text-2xl font-bold">
+    Upcoming Sessions
+  </h2>
+
+  <div className="mt-5 space-y-5">
+
+    {upcomingAppointments.length === 0 ? (
+      <div className="rounded-3xl border p-6">
+        No upcoming sessions.
+      </div>
+    ) : (
+      upcomingAppointments.map(
+        (appointment) => (
+          <div
+            key={appointment._id}
+            className="rounded-3xl border p-6"
+          >
+            <h3 className="text-lg font-semibold">
+              {
+                appointment.patient
+                  ?.anonymousName
+              }
+            </h3>
+
+            <p className="mt-2">
+              {new Date(
+                appointment.appointmentDate
+              ).toLocaleString()}
+            </p>
+
+            <p className="mt-2 text-muted-foreground">
+              {appointment.reason}
+            </p>
+          </div>
+        )
+      )
+    )}
+
+  </div>
+</div>
+
   </div>
 );
 }
