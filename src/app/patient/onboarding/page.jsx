@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function PatientOnboardingPage() {
+
+    const { data: session } = useSession(); 
+
   const router = useRouter();
 
   const [loading, setLoading] =
@@ -108,6 +112,17 @@ export default function PatientOnboardingPage() {
         e.target.value,
     });
   }
+
+  useEffect(() => {
+  if (
+    session?.user
+      ?.profileCompleted
+  ) {
+    router.push(
+      "/patient/dashboard"
+    );
+  }
+}, [session, router]);
 
   return (
     <div className="min-h-screen bg-background py-10">

@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 
 export default function Navbar() {
   return (
@@ -30,15 +33,34 @@ export default function Navbar() {
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-3">
-          <button className="px-5 py-2 rounded-xl border hover:bg-muted transition">
-            Login
-          </button>
+       <div className="flex gap-3">
 
-          <button className="px-5 py-2 rounded-xl bg-primary text-white hover:opacity-90 transition">
-            Sign Up
-          </button>
-        </div>
+  <Link
+    href="/login"
+    className="px-5 py-2 rounded-xl border hover:bg-muted transition"
+  >
+    Login
+  </Link>
+
+  <Link
+    href="/signup"
+    className="px-5 py-2 rounded-xl bg-primary text-white hover:opacity-90 transition"
+  >
+    Sign Up
+  </Link>
+
+  <button
+    onClick={() =>
+      signOut({
+        callbackUrl: "/",
+      })
+    }
+    className="px-5 py-2 rounded-xl border"
+  >
+    Logout
+  </button>
+
+</div>
 
       </nav>
     </header>
