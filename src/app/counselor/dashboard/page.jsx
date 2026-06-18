@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import CounselorAnalytics from "@/components/CounselorAnalytics";
 
 
 export default function CounselorDashboard() {
@@ -92,123 +93,160 @@ async function fetchUpcomingAppointments() {
   fetchUpcomingAppointments();
 }, []);
 
- return (
-  <div>
-    <h1 className="text-4xl font-bold">
-      Counselor Dashboard
-    </h1>
+return (
+  <div className="space-y-10">
 
-    <p className="mt-2 text-muted-foreground">
-      Pending patient requests.
-    </p>
+    {/* Header */}
 
-    <div className="mt-8 space-y-5">
+    <div>
+      <h1 className="text-4xl font-bold">
+        Counselor Dashboard
+      </h1>
+
+      <p className="mt-2 text-muted-foreground">
+        Manage patients,
+        assessments and sessions.
+      </p>
+    </div>
+
+    {/* Analytics */}
+
+    <CounselorAnalytics />
+
+    {/* Pending Requests */}
+
+    <section>
+      <h2 className="mb-5 text-2xl font-bold">
+        Pending Requests
+      </h2>
+
       {requests.length === 0 ? (
         <div className="rounded-3xl border p-6">
           No pending requests.
         </div>
       ) : (
-        requests.map((request) => (
-          <div
-            key={request._id}
-            className="rounded-3xl border p-6"
-          >
-            <h2 className="text-xl font-semibold">
-              {request.patient?.anonymousName}
-            </h2>
-
-            <p>
-              Age: {request.patient?.age}
-            </p>
-
-            <p>
-              Gender: {request.patient?.gender}
-            </p>
-
-            <p>
-              Preferred Language:{" "}
-              {request.patient?.preferredLanguage}
-            </p>
-
-            <div className="mt-4 flex gap-3">
-              <button
-                onClick={() =>
-                  acceptRequest(
-                    request._id
-                  )
-                }
-                className="rounded-xl bg-green-600 px-4 py-2 text-white"
+        <div className="grid gap-5 md:grid-cols-2">
+          {requests.map(
+            (request) => (
+              <div
+                key={request._id}
+                className="rounded-3xl border p-6"
               >
-                Accept
-              </button>
+                <h3 className="text-xl font-semibold">
+                  {
+                    request.patient
+                      ?.anonymousName
+                  }
+                </h3>
 
-              <button
-                onClick={() =>
-                  rejectRequest(
-                    request._id
-                  )
-                }
-                className="rounded-xl bg-red-600 px-4 py-2 text-white"
-              >
-                Reject
-              </button>
-            </div>
+                <div className="mt-4 space-y-1 text-sm">
+                  <p>
+                    Age:
+                    {" "}
+                    {
+                      request.patient
+                        ?.age
+                    }
+                  </p>
 
-  
+                  <p>
+                    Gender:
+                    {" "}
+                    {
+                      request.patient
+                        ?.gender
+                    }
+                  </p>
 
-          </div>
-        ))
+                  <p>
+                    Language:
+                    {" "}
+                    {
+                      request.patient
+                        ?.preferredLanguage
+                    }
+                  </p>
+                </div>
 
-        
+                <div className="mt-5 flex gap-3">
+
+                  <button
+                    onClick={() =>
+                      acceptRequest(
+                        request._id
+                      )
+                    }
+                    className="rounded-xl bg-green-600 px-4 py-2 text-white"
+                  >
+                    Accept
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      rejectRequest(
+                        request._id
+                      )
+                    }
+                    className="rounded-xl bg-red-600 px-4 py-2 text-white"
+                  >
+                    Reject
+                  </button>
+
+                </div>
+              </div>
+            )
+          )}
+        </div>
       )}
-    </div>
+    </section>
 
-              <p>
-  Total Upcoming:
-  {upcomingAppointments.length}
-</p>
+    {/* Upcoming Sessions */}
 
-            <div className="mt-12">
-  <h2 className="text-2xl font-bold">
-    Upcoming Sessions
-  </h2>
+    <section>
+      <h2 className="mb-5 text-2xl font-bold">
+        Upcoming Sessions
+      </h2>
 
-  <div className="mt-5 space-y-5">
+      {upcomingAppointments.length === 0 ? (
+        <div className="rounded-3xl border p-6">
+          No upcoming sessions.
+        </div>
+      ) : (
+        <div className="grid gap-5 md:grid-cols-2">
+          {upcomingAppointments.map(
+            (
+              appointment
+            ) => (
+              <div
+                key={
+                  appointment._id
+                }
+                className="rounded-3xl border p-6"
+              >
+                <h3 className="text-xl font-semibold">
+                  {
+                    appointment.patient
+                      ?.anonymousName
+                  }
+                </h3>
 
-    {upcomingAppointments.length === 0 ? (
-      <div className="rounded-3xl border p-6">
-        No upcoming sessions.
-      </div>
-    ) : (
-      upcomingAppointments.map(
-        (appointment) => (
-          <div
-            key={appointment._id}
-            className="rounded-3xl border p-6"
-          >
-            <h3 className="text-lg font-semibold">
-              {
-                appointment.patient
-                  ?.anonymousName
-              }
-            </h3>
+                <p className="mt-3">
+                  {new Date(
+                    appointment.appointmentDate
+                  ).toLocaleString()}
+                </p>
 
-            <p className="mt-2">
-              {new Date(
-                appointment.appointmentDate
-              ).toLocaleString()}
-            </p>
-
-            <p className="mt-2 text-muted-foreground">
-              {appointment.reason}
-            </p>
-          </div>
-        )
-      )
-    )}
-
-  </div>
-</div>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {
+                    appointment.reason
+                  }
+                </p>
+              </div>
+            )
+          )}
+        </div>
+      )}
+    </section>
 
   </div>
 );
