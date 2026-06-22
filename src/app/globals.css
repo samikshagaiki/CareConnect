@@ -48,12 +48,5 @@
 
 body {
   @apply antialiased text-foreground;
-
-  background:
-    linear-gradient(
-      180deg,
-      #FAFAF7 0%,
-      #F4F7FF 50%,
-      #FAFAF7 100%
-    );
+  background: #FAFAF7;
 }

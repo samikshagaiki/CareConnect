@@ -1,46 +1,47 @@
+import WaveDivider from "./WaveDivider";
+
 const testimonials = [
   {
     name: "Anonymous User",
-    text: "The journaling feature helped me identify patterns in my emotions and become more self-aware.",
+    text: "Journaling helped me understand my emotions.",
   },
   {
     name: "Student",
-    text: "Having Maya available anytime made me feel supported during stressful academic periods.",
+    text: "Maya supported me during stressful exams.",
   },
   {
     name: "Community Member",
-    text: "The anonymous support community helped me realize I wasn't alone.",
+    text: "I realized I wasn't alone.",
   },
 ];
 
 export default function Testimonials() {
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-350 mx-auto px-6">
+    <section className="relative py-24 bg-[#EEF7FF]">
 
-        <div className="text-center">
-          <h2 className="text-4xl font-bold">
-            What People Say
-          </h2>
+      <div className="max-w-7xl mx-auto px-6">
 
-          <p className="mt-4 text-muted-foreground">
-            Stories from individuals who found support through Connect Care.
-          </p>
-        </div>
+        <h2 className="text-center text-5xl font-bold">
+          Stories Of Growth
+        </h2>
 
         <div className="grid md:grid-cols-3 gap-8 mt-16">
 
-          {testimonials.map((testimonial) => (
+          {testimonials.map((item) => (
             <div
-              key={testimonial.name}
-              className="bg-background rounded-3xl p-8 border"
+              key={item.name}
+              className="rounded-4xl bg-white p-8 shadow-lg"
             >
-              <p className="italic text-muted-foreground">
-                &quot;{testimonial.text}&quot;
+              <div className="text-4xl">
+                💬
+              </div>
+
+              <p className="mt-5 italic">
+                &quot;{item.text}&quot;
               </p>
 
               <h4 className="mt-6 font-semibold">
-                {testimonial.name}
+                {item.name}
               </h4>
             </div>
           ))}
@@ -48,6 +49,8 @@ export default function Testimonials() {
         </div>
 
       </div>
+
+      <WaveDivider color="#F5F0FF" />
     </section>
   );
 }

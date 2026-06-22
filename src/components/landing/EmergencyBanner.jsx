@@ -1,26 +1,29 @@
+import WaveDivider from "./WaveDivider";
+
 export default function EmergencyBanner() {
   return (
-    <section className="py-20">
-      <div className="max-w-300 mx-auto px-6">
+    <section className="relative py-24 bg-[#FFFDF8]">
 
-        <div className="bg-linear-to-r from-red-50 to-orange-50 border border-red-100 rounded-3xl p-10">
+      <div className="max-w-2xl mx-auto px-6 text-center">
 
-          <h2 className="text-3xl font-bold">
+
+          <h2 className="text-4xl font-bold ">
             Need Immediate Help?
           </h2>
 
-          <p className="mt-4 text-muted-foreground">
-            If you&apos;re experiencing a crisis or need urgent emotional support,
-            access verified emergency resources and helplines.
+          <p className="mt-5 max-w-2xl mx-auto font-medium text-slate-600">
+            Access emergency resources,
+            helplines and support services.
           </p>
 
-          <button className="mt-6 px-6 py-3 rounded-2xl bg-red-500 text-white">
+          <button className="mt-8 rounded-2xl bg-purple-100 px-8 py-4 font-semibold shadow">
             Get Help Now
           </button>
 
         </div>
 
-      </div>
+
+      <WaveDivider color="#EEF7FF" />
     </section>
   );
 }
