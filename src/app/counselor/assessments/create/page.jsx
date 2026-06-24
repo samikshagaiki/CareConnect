@@ -165,26 +165,94 @@ export default function CreateAssessmentPage() {
     }
   }
 
-  return (
-    <div className="mx-auto max-w-4xl">
+ return (
+  <div className="mx-auto max-w-6xl space-y-8">
 
-      <h1 className="text-4xl font-bold">
+    {/* Header */}
+
+    <div
+      className="
+      rounded-[32px]
+      border
+      border-slate-200
+      bg-white
+      p-8
+      shadow-sm
+    "
+    >
+      <p className="text-sm font-medium uppercase tracking-wider text-blue-600">
+        Counselor Workspace
+      </p>
+
+      <h1 className="mt-2 text-4xl font-bold text-slate-800">
         Create Custom Assessment
       </h1>
 
-      <p className="mt-2 text-muted-foreground">
-        Create a personalized
-        assessment and assign it
-        to a patient.
+      <p className="mt-3 max-w-3xl text-slate-500">
+        Design personalized assessments for your patients,
+        monitor their responses, and gain deeper insights
+        into their wellbeing journey.
       </p>
+    </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="mt-8 space-y-6"
-      >
+    {/* Summary Cards */}
+
+    <div className="grid gap-5 md:grid-cols-3">
+
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p className="text-sm text-slate-500">
+          Patients Available
+        </p>
+
+        <h2 className="mt-3 text-4xl font-bold text-slate-800">
+          {patients.length}
+        </h2>
+      </div>
+
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p className="text-sm text-slate-500">
+          Questions Added
+        </p>
+
+        <h2 className="mt-3 text-4xl font-bold text-blue-600">
+          {questions.length}
+        </h2>
+      </div>
+
+      <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <p className="text-sm text-slate-500">
+          Assessment Type
+        </p>
+
+        <h2 className="mt-3 text-2xl font-semibold text-slate-800">
+          Custom
+        </h2>
+      </div>
+
+    </div>
+
+    {/* Form */}
+
+    <form
+      onSubmit={handleSubmit}
+      className="
+      rounded-[32px]
+      border
+      border-slate-200
+      bg-white
+      p-8
+      shadow-sm
+      space-y-8
+    "
+    >
+
+      {/* Basic Details */}
+
+      <div className="grid gap-6 lg:grid-cols-2">
 
         <div>
-          <label className="mb-2 block font-medium">
+
+          <label className="mb-2 block font-medium text-slate-700">
             Assessment Title
           </label>
 
@@ -192,37 +260,27 @@ export default function CreateAssessmentPage() {
             type="text"
             value={title}
             onChange={(e) =>
-              setTitle(
-                e.target.value
-              )
+              setTitle(e.target.value)
             }
-            className="w-full rounded-xl border p-3"
             placeholder="Sleep Quality Assessment"
+            className="
+            w-full
+            rounded-2xl
+            border
+            border-slate-300
+            p-4
+            focus:border-blue-500
+            focus:outline-none
+          "
             required
           />
+
         </div>
 
         <div>
-          <label className="mb-2 block font-medium">
-            Description
-          </label>
 
-          <textarea
-            value={description}
-            onChange={(e) =>
-              setDescription(
-                e.target.value
-              )
-            }
-            rows={3}
-            className="w-full rounded-xl border p-3"
-            placeholder="Purpose of this assessment"
-          />
-        </div>
-
-        <div>
-          <label className="mb-2 block font-medium">
-            Assign To Patient
+          <label className="mb-2 block font-medium text-slate-700">
+            Assign Patient
           </label>
 
           <select
@@ -232,15 +290,21 @@ export default function CreateAssessmentPage() {
                 e.target.value
               )
             }
-            className="w-full rounded-xl border p-3"
+            className="
+            w-full
+            rounded-2xl
+            border
+            border-slate-300
+            p-4
+            focus:border-blue-500
+            focus:outline-none
+          "
             required
           >
             {patients.map(
               (patient) => (
                 <option
-                  key={
-                    patient._id
-                  }
+                  key={patient._id}
                   value={
                     patient.userId
                   }
@@ -252,57 +316,101 @@ export default function CreateAssessmentPage() {
               )
             )}
           </select>
+
         </div>
 
-        <div>
-          <div className="mb-4 flex items-center justify-between">
+      </div>
 
-            <h2 className="text-xl font-semibold">
+      {/* Description */}
+
+      <div>
+
+        <label className="mb-2 block font-medium text-slate-700">
+          Description
+        </label>
+
+        <textarea
+          value={description}
+          onChange={(e) =>
+            setDescription(
+              e.target.value
+            )
+          }
+          rows={4}
+          placeholder="Explain the objective and purpose of this assessment."
+          className="
+          w-full
+          rounded-2xl
+          border
+          border-slate-300
+          p-4
+          focus:border-blue-500
+          focus:outline-none
+        "
+        />
+
+      </div>
+
+      {/* Questions Section */}
+
+      <div>
+
+        <div className="mb-6 flex items-center justify-between">
+
+          <div>
+
+            <h2 className="text-2xl font-bold text-slate-800">
               Questions
             </h2>
 
-            <button
-              type="button"
-              onClick={
-                addQuestion
-              }
-              className="rounded-xl border px-4 py-2"
-            >
-              Add Question
-            </button>
+            <p className="text-sm text-slate-500">
+              Each question will use a 5-point Likert scale.
+            </p>
 
           </div>
 
-          <div className="space-y-4">
+          <button
+            type="button"
+            onClick={addQuestion}
+            className="
+            rounded-2xl
+            bg-blue-600
+            px-5
+            py-3
+            font-medium
+            text-white
+            hover:bg-blue-700
+          "
+          >
+            + Add Question
+          </button>
 
-            {questions.map(
-              (
-                question,
-                index
-              ) => (
-                <div
-                  key={index}
-                  className="flex gap-3"
-                >
+        </div>
 
-                  <input
-                    type="text"
-                    value={question}
-                    onChange={(
-                      e
-                    ) =>
-                      updateQuestion(
-                        index,
-                        e.target
-                          .value
-                      )
-                    }
-                    placeholder={`Question ${
-                      index + 1
-                    }`}
-                    className="flex-1 rounded-xl border p-3"
-                    required
-                  />
+        <div className="space-y-5">
+
+          {questions.map(
+            (
+              question,
+              index
+            ) => (
+
+              <div
+                key={index}
+                className="
+                rounded-3xl
+                border
+                border-slate-200
+                bg-slate-50
+                p-5
+              "
+              >
+
+                <div className="mb-3 flex items-center justify-between">
+
+                  <h3 className="font-semibold text-slate-700">
+                    Question {index + 1}
+                  </h3>
 
                   {questions.length >
                     1 && (
@@ -313,31 +421,81 @@ export default function CreateAssessmentPage() {
                           index
                         )
                       }
-                      className="rounded-xl bg-red-500 px-4 text-white"
+                      className="
+                      rounded-xl
+                      bg-red-500
+                      px-4
+                      py-2
+                      text-sm
+                      text-white
+                      hover:bg-red-600
+                    "
                     >
-                      X
+                      Remove
                     </button>
                   )}
 
                 </div>
-              )
-            )}
 
-          </div>
+                <input
+                  type="text"
+                  value={question}
+                  onChange={(e) =>
+                    updateQuestion(
+                      index,
+                      e.target.value
+                    )
+                  }
+                  placeholder="Enter question text..."
+                  className="
+                  w-full
+                  rounded-2xl
+                  border
+                  border-slate-300
+                  bg-white
+                  p-4
+                "
+                  required
+                />
+
+              </div>
+
+            )
+          )}
+
         </div>
+
+      </div>
+
+      {/* Submit */}
+
+      <div className="border-t border-slate-200 pt-6">
 
         <button
           type="submit"
           disabled={loading}
-          className="rounded-xl bg-primary px-6 py-3 text-primary-foreground"
+          className="
+          rounded-2xl
+          bg-blue-600
+          px-8
+          py-4
+          font-medium
+          text-white
+          shadow-sm
+          transition
+          hover:bg-blue-700
+          disabled:opacity-50
+        "
         >
           {loading
-            ? "Creating..."
+            ? "Creating Assessment..."
             : "Create Assessment"}
         </button>
 
-      </form>
+      </div>
 
-    </div>
-  );
+    </form>
+
+  </div>
+);
 }

@@ -2,28 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const moods = [
-  {
-    label: "😄 Very Happy",
-    value: "very_happy",
-  },
-  {
-    label: "🙂 Happy",
-    value: "happy",
-  },
-  {
-    label: "😐 Neutral",
-    value: "neutral",
-  },
-  {
-    label: "🙁 Sad",
-    value: "sad",
-  },
-  {
-    label: "😢 Very Sad",
-    value: "very_sad",
-  },
-];
+
 
 export default function JournalPage() {
   const [title, setTitle] =
@@ -112,124 +91,285 @@ export default function JournalPage() {
   }, []);
 
   return (
-    <div>
+  <div className="space-y-8">
 
-      <h1 className="text-4xl font-bold">
-        Journal
+    {/* HEADER */}
+
+    <div>
+      <h1 className="text-5xl font-bold text-slate-800">
+        My Journal
+        <span className="ml-3 text-purple-400">
+          ✨
+        </span>
       </h1>
 
-      <p className="mt-2 text-muted-foreground">
-        Write your thoughts and
-        feelings freely.
+      <p className="mt-3 text-lg text-slate-500">
+        A safe place to reflect, write and express yourself.
       </p>
+    </div>
 
-      <div className="mt-8 rounded-3xl border bg-card p-6">
+    {/* MAIN SECTION */}
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
+    <div
+      className="
+      overflow-hidden
+      rounded-[40px]
+      bg-white
+      shadow-xl
+    "
+    >
+
+      <div className="grid lg:grid-cols-[1.5fr_0.9fr]">
+
+        {/* JOURNAL WRITING AREA */}
+
+        <div
+          className="
+          p-10
+          bg-linear-to-br
+          from-[#F8F3FF]
+          via-white
+          to-[#EEF8FF]
+        "
         >
 
-          <input
-            type="text"
-            placeholder="Journal Title"
-            value={title}
-            onChange={(e) =>
-              setTitle(e.target.value)
-            }
-            className="w-full rounded-xl border p-3"
-            required
-          />
+          <h2 className="text-3xl font-bold text-slate-800">
+            Today&apos;s Entry 💜
+          </h2>
 
-          <select
-            value={moodTag}
-            onChange={(e) =>
-              setMoodTag(
-                e.target.value
-              )
-            }
-            className="w-full rounded-xl border p-3"
+          <p className="mt-2 text-slate-500">
+            Write freely. Your thoughts matter.
+          </p>
+
+          <form
+            onSubmit={handleSubmit}
+            className="mt-8 space-y-6"
           >
-            {moods.map((mood) => (
-              <option
-                key={mood.value}
-                value={mood.value}
-              >
-                {mood.label}
-              </option>
-            ))}
-          </select>
 
-          <textarea
-            rows={8}
-            placeholder="Write your thoughts..."
-            value={content}
-            onChange={(e) =>
-              setContent(
-                e.target.value
-              )
-            }
-            className="w-full rounded-xl border p-3"
-            required
-          />
+            <input
+              type="text"
+              placeholder="Journal Title"
+              value={title}
+              onChange={(e) =>
+                setTitle(e.target.value)
+              }
+              required
+              className="
+                w-full
+                rounded-2xl
+                border
+                border-purple-100
+                bg-white
+                px-5
+                py-4
+                outline-none
+                focus:ring-4
+                focus:ring-purple-100
+              "
+            />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-xl bg-primary px-6 py-3 text-primary-foreground"
-          >
-            {loading
-              ? "Saving..."
-              : "Save Journal"}
-          </button>
+            {/* NOTEBOOK */}
 
-        </form>
+            <div
+              className="
+              relative
+              h-130
+              overflow-hidden
+              rounded-[30px]
+              border
+              border-purple-100
+              bg-white
+              shadow-inner
+            "
+            >
 
-      </div>
+              {/* NOTEBOOK LINES */}
 
-      <div className="mt-10">
-
-        <h2 className="mb-4 text-2xl font-bold">
-          Journal History
-        </h2>
-
-        <div className="space-y-4">
-
-          {journals.map(
-            (journal) => (
               <div
-                key={journal._id}
-                className="rounded-2xl border bg-card p-5"
+                className="
+                absolute
+                inset-0
+                opacity-30
+                pointer-events-none
+              "
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(transparent, transparent 35px, #dbeafe 36px)",
+                }}
+              />
+
+              {/* LEFT MARGIN */}
+
+              <div
+                className="
+                absolute
+                top-0
+                bottom-0
+                left-16
+                w-0.5
+                bg-pink-200
+                opacity-70
+              "
+              />
+
+              <textarea
+                rows={12}
+                value={content}
+                onChange={(e) =>
+                  setContent(
+                    e.target.value
+                  )
+                }
+                placeholder="Dear Journal..."
+                required
+                className="
+                  relative
+                  z-10
+                  h-full
+                  w-full
+                  resize-none
+                  bg-transparent
+                  p-8
+                  pl-24
+                  text-lg
+                  leading-9
+                  outline-none
+                "
+              />
+
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="
+              rounded-2xl
+              bg-linear-to-r
+              from-[#8EC5FC]
+              to-[#DCCCFD]
+              px-8
+              py-4
+              font-semibold
+              text-white
+              shadow-lg
+              transition-all
+              hover:scale-[1.02]
+            "
+            >
+              {loading
+                ? "Saving..."
+                : "Save Journal"}
+            </button>
+
+          </form>
+
+        </div>
+
+        {/* JOURNAL HISTORY */}
+
+        <div
+          className="
+          flex
+          h-212.5
+          flex-col
+          border-l
+          border-purple-100
+          bg-white
+          p-8
+        "
+        >
+
+          <h2 className="text-2xl font-bold">
+            Past Entries 📖
+          </h2>
+
+          <p className="mt-2 text-slate-500">
+            Revisit your journey.
+          </p>
+
+          <div
+            className="
+            mt-6
+            flex-1
+            space-y-4
+            overflow-y-auto
+            pr-2
+            custom-scrollbar
+          "
+          >
+
+            {journals.length === 0 ? (
+              <div
+                className="
+                rounded-3xl
+                border
+                border-dashed
+                border-purple-200
+                p-8
+                text-center
+                text-slate-500
+              "
               >
-
-                <h3 className="text-xl font-semibold">
-                  {journal.title}
-                </h3>
-
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Mood:
-                  {" "}
-                  {journal.moodTag}
-                </p>
-
-                <p className="mt-4 whitespace-pre-wrap">
-                  {journal.content}
-                </p>
-
-                <p className="mt-4 text-sm text-muted-foreground">
-                  {new Date(
-                    journal.createdAt
-                  ).toLocaleString()}
-                </p>
-
+                No journal entries yet.
               </div>
-            )
-          )}
+            ) : (
+              journals.map(
+                (journal) => (
+                  <div
+                    key={journal._id}
+                    className="
+                    rounded-3xl
+                    border
+                    border-purple-100
+                    bg-linear-to-r
+                    from-[#FCF8FF]
+                    to-[#F7FBFF]
+                    p-5
+                    transition-all
+                    hover:shadow-md
+                  "
+                  >
+
+                    <h3 className="font-semibold text-slate-800">
+                      {journal.title}
+                    </h3>
+
+                    <p
+                      className="
+                      mt-3
+                      line-clamp-4
+                      text-sm
+                      text-slate-500
+                    "
+                    >
+                      {journal.content}
+                    </p>
+
+                    <p
+                      className="
+                      mt-4
+                      text-xs
+                      text-slate-400
+                    "
+                    >
+                      {new Date(
+                        journal.createdAt
+                      ).toLocaleString()}
+                    </p>
+
+                  </div>
+                )
+              )
+            )}
+
+          </div>
 
         </div>
 
       </div>
 
     </div>
-  );
+
+  </div>
+);
 }

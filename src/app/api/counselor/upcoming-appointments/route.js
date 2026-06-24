@@ -31,17 +31,16 @@ export async function GET() {
 
     await connectDB();
 
-    const appointments =
-      await Appointment.find({
-        counselorId:
-          session.user.id,
+    const now = new Date();
 
-        status: "accepted",
-      })
-        .sort({
-          appointmentDate: 1,
-        })
-        .lean();
+const appointments =
+  await Appointment.find({
+    counselorId: session.user.id,
+    appointmentDate: {
+      $gte: now,
+    },
+    status: "approved",
+  });
 
     const enriched =
       await Promise.all(
@@ -62,6 +61,8 @@ export async function GET() {
           }
         )
       );
+
+      
 
     return NextResponse.json({
       success: true,

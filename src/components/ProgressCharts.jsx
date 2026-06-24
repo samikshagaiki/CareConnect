@@ -19,117 +19,82 @@ const moodScores = {
 };
 
 export default function ProgressCharts({
-  moods,
-  assessments,
+  data = [],
+  type,
 }) {
-  const moodData =
-    moods.map((mood) => ({
-      date: new Date(
-        mood.createdAt
-      ).toLocaleDateString(),
-
-      score:
-        moodScores[
-          mood.mood
-        ],
-    }));
-
-  const phqData =
-    assessments
-      .filter(
-        (assessment) =>
-          assessment.score > 0
-      )
-      .map(
-        (assessment) => ({
+  const chartData =
+  type === "mood"
+    ? (data || []).map((mood) => ({
+        date: new Date(
+          mood.createdAt
+        ).toLocaleDateString(),
+        score:
+          moodScores[mood.mood],
+      }))
+    : (data || [])
+        .filter(
+          (item) =>
+            item.score > 0
+        )
+        .map((item) => ({
           date: new Date(
-            assessment.submittedAt
+            item.submittedAt
           ).toLocaleDateString(),
-
           score:
-            assessment.score,
-        })
-      );
+            item.score,
+        }));
+
+       
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="h-80">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
+        <LineChart
+          data={chartData}
+        >
+          <CartesianGrid
+            strokeDasharray="5 5"
+            stroke={
+              type === "mood"
+                ? "#D9EEFF"
+                : "#E9D5FF"
+            }
+          />
 
-      {/* Mood Trend */}
+          <XAxis
+            dataKey="date"
+          />
 
-      <div className="rounded-3xl border p-6">
-        <h2 className="mb-4 text-xl font-bold">
-          Mood Trend
-        </h2>
+          <YAxis />
 
-        <div className="h-72">
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-          >
-            <LineChart
-              data={moodData}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-              />
+          <Tooltip
+            contentStyle={{
+              borderRadius:
+                "16px",
+              border: "none",
+              boxShadow:
+                "0 8px 20px rgba(0,0,0,0.08)",
+            }}
+          />
 
-              <XAxis
-                dataKey="date"
-              />
-
-              <YAxis
-                domain={[
-                  1, 5,
-                ]}
-              />
-
-              <Tooltip />
-
-              <Line
-                type="monotone"
-                dataKey="score"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* PHQ-9 Trend */}
-
-      <div className="rounded-3xl border p-6">
-        <h2 className="mb-4 text-xl font-bold">
-          PHQ-9 Trend
-        </h2>
-
-        <div className="h-72">
-          <ResponsiveContainer
-            width="100%"
-            height="100%"
-          >
-            <LineChart
-              data={phqData}
-            >
-              <CartesianGrid
-                strokeDasharray="3 3"
-              />
-
-              <XAxis
-                dataKey="date"
-              />
-
-              <YAxis />
-
-              <Tooltip />
-
-              <Line
-                type="monotone"
-                dataKey="score"
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
+          <Line
+            type="monotone"
+            dataKey="score"
+            stroke={
+              type === "mood"
+                ? "#38BDF8"
+                : "#A855F7"
+            }
+            strokeWidth={4}
+            dot={{
+              r: 6,
+            }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
 }

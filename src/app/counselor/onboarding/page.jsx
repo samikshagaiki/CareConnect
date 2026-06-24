@@ -158,184 +158,366 @@ export default function CounselorOnboardingPage() {
     }
   }
 
-  return (
-    <div className="mx-auto max-w-4xl p-8">
+ return (
+  <div className="min-h-screen bg-[#F7FBFF] py-10 px-6">
 
-      <h1 className="text-4xl font-bold">
-        Counselor Profile
-      </h1>
+    <div className="mx-auto max-w-6xl">
 
-      <p className="mt-2 text-muted-foreground">
-        Complete your profile
-        for admin review.
-      </p>
+      {/* HERO */}
 
-      <form
-        onSubmit={handleSubmit}
-        className="mt-8 space-y-6"
+      <div
+        className="
+        mb-8
+        overflow-hidden
+        rounded-[36px]
+        bg-gradient-to-r
+        from-[#67B7FF]
+        to-[#B89CFF]
+        p-10
+        text-white
+        shadow-xl
+      "
       >
+        <div className="max-w-3xl">
 
-        <input
-          type="text"
-          placeholder="Full Name"
-          value={fullName}
-          onChange={(e) =>
-            setFullName(
-              e.target.value
-            )
-          }
-          className="w-full rounded-xl border p-3"
-          required
-        />
+          <p className="text-sm uppercase tracking-widest text-white/80">
+            Counselor Onboarding
+          </p>
 
-        <select
-          value={gender}
-          onChange={(e) =>
-            setGender(
-              e.target.value
-            )
-          }
-          className="w-full rounded-xl border p-3"
-          required
+          <h1 className="mt-3 text-5xl font-bold">
+            Build Your Profile
+          </h1>
+
+          <p className="mt-4 text-lg text-white/90">
+            Complete your profile for verification and start
+            helping patients on CareConnect.
+          </p>
+
+        </div>
+      </div>
+
+      {/* FORM CARD */}
+
+      <div
+        className="
+        rounded-[36px]
+        bg-white
+        p-10
+        shadow-xl
+        border
+        border-slate-100
+      "
+      >
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-8"
         >
-          <option value="">
-            Select Gender
-          </option>
 
-          <option value="male">
-            Male
-          </option>
+          {/* BASIC DETAILS */}
 
-          <option value="female">
-            Female
-          </option>
+          <div>
 
-          <option value="other">
-            Other
-          </option>
-        </select>
+            <h2 className="mb-5 text-2xl font-bold text-slate-800">
+              Personal Information
+            </h2>
 
-        <input
-          type="number"
-          placeholder="Years of Experience"
-          value={experience}
-          onChange={(e) =>
-            setExperience(
-              e.target.value
-            )
-          }
-          className="w-full rounded-xl border p-3"
-          required
-        />
+            <div className="grid gap-5 md:grid-cols-2">
 
-        <textarea
-          rows={5}
-          placeholder="Professional Bio"
-          value={bio}
-          onChange={(e) =>
-            setBio(
-              e.target.value
-            )
-          }
-          className="w-full rounded-xl border p-3"
-          required
-        />
+              <input
+                type="text"
+                placeholder="Full Name"
+                value={fullName}
+                onChange={(e) =>
+                  setFullName(
+                    e.target.value
+                  )
+                }
+                className="
+                rounded-2xl
+                border
+                border-slate-200
+                px-5
+                py-4
+                outline-none
+                focus:border-sky-300
+                focus:ring-4
+                focus:ring-sky-100
+              "
+                required
+              />
 
-        <input
-          type="text"
-          placeholder="Languages (comma separated)"
-          value={languages}
-          onChange={(e) =>
-            setLanguages(
-              e.target.value
-            )
-          }
-          className="w-full rounded-xl border p-3"
-          required
-        />
+              <select
+                value={gender}
+                onChange={(e) =>
+                  setGender(
+                    e.target.value
+                  )
+                }
+                className="
+                rounded-2xl
+                border
+                border-slate-200
+                px-5
+                py-4
+                outline-none
+                focus:border-sky-300
+                focus:ring-4
+                focus:ring-sky-100
+              "
+                required
+              >
+                <option value="">
+                  Select Gender
+                </option>
 
-        <div>
+                <option value="male">
+                  Male
+                </option>
 
-          <h3 className="mb-3 font-semibold">
-            Specializations
-          </h3>
+                <option value="female">
+                  Female
+                </option>
 
-          <div className="flex flex-wrap gap-2">
+                <option value="other">
+                  Other
+                </option>
+              </select>
 
-            {SPECIALIZATIONS.map(
-              (item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() =>
-                    toggleSpecialization(
-                      item
-                    )
-                  }
-                  className={`rounded-xl border px-4 py-2 ${
-                    specialization.includes(
-                      item
-                    )
-                      ? "border-blue-500"
-                      : ""
-                  }`}
-                >
-                  {item}
-                </button>
-              )
-            )}
+            </div>
 
           </div>
 
-        </div>
+          {/* EXPERIENCE */}
 
-        <div>
+          <div>
 
-          <h3 className="mb-3 font-semibold">
-            Age Groups
-          </h3>
+            <h2 className="mb-5 text-2xl font-bold text-slate-800">
+              Professional Details
+            </h2>
 
-          <div className="flex flex-wrap gap-2">
+            <div className="grid gap-5 md:grid-cols-2">
 
-            {AGE_GROUPS.map(
-              (item) => (
-                <button
-                  key={item}
-                  type="button"
-                  onClick={() =>
-                    toggleAgeGroup(
-                      item
-                    )
-                  }
-                  className={`rounded-xl border px-4 py-2 ${
-                    ageGroups.includes(
-                      item
-                    )
-                      ? "border-blue-500"
-                      : ""
-                  }`}
-                >
-                  {item}
-                </button>
-              )
-            )}
+              <input
+                type="number"
+                placeholder="Years of Experience"
+                value={experience}
+                onChange={(e) =>
+                  setExperience(
+                    e.target.value
+                  )
+                }
+                className="
+                rounded-2xl
+                border
+                border-slate-200
+                px-5
+                py-4
+                outline-none
+                focus:border-sky-300
+                focus:ring-4
+                focus:ring-sky-100
+              "
+                required
+              />
+
+              <input
+                type="text"
+                placeholder="Languages (comma separated)"
+                value={languages}
+                onChange={(e) =>
+                  setLanguages(
+                    e.target.value
+                  )
+                }
+                className="
+                rounded-2xl
+                border
+                border-slate-200
+                px-5
+                py-4
+                outline-none
+                focus:border-sky-300
+                focus:ring-4
+                focus:ring-sky-100
+              "
+                required
+              />
+
+            </div>
+
+            <textarea
+              rows={6}
+              placeholder="Professional Bio"
+              value={bio}
+              onChange={(e) =>
+                setBio(
+                  e.target.value
+                )
+              }
+              className="
+              mt-5
+              w-full
+              rounded-2xl
+              border
+              border-slate-200
+              px-5
+              py-4
+              outline-none
+              resize-none
+              focus:border-sky-300
+              focus:ring-4
+              focus:ring-sky-100
+            "
+              required
+            />
 
           </div>
 
-        </div>
+          {/* SPECIALIZATIONS */}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="rounded-xl bg-primary px-6 py-3 text-primary-foreground"
-        >
-          {loading
-            ? "Submitting..."
-            : "Submit Profile"}
-        </button>
+          <div>
 
-      </form>
+            <h2 className="mb-5 text-2xl font-bold text-slate-800">
+              Specializations
+            </h2>
+
+            <div className="flex flex-wrap gap-3">
+
+              {SPECIALIZATIONS.map(
+                (item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() =>
+                      toggleSpecialization(
+                        item
+                      )
+                    }
+                    className={`
+                    rounded-full
+                    px-5
+                    py-3
+                    font-medium
+                    transition-all
+                    ${
+                      specialization.includes(
+                        item
+                      )
+                        ? `
+                          bg-gradient-to-r
+                          from-sky-400
+                          to-purple-400
+                          text-white
+                          shadow-md
+                        `
+                        : `
+                          border
+                          border-slate-200
+                          hover:border-sky-300
+                          hover:bg-sky-50
+                        `
+                    }
+                  `}
+                  >
+                    {item}
+                  </button>
+                )
+              )}
+
+            </div>
+
+          </div>
+
+          {/* AGE GROUPS */}
+
+          <div>
+
+            <h2 className="mb-5 text-2xl font-bold text-slate-800">
+              Preferred Age Groups
+            </h2>
+
+            <div className="flex flex-wrap gap-3">
+
+              {AGE_GROUPS.map(
+                (item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    onClick={() =>
+                      toggleAgeGroup(
+                        item
+                      )
+                    }
+                    className={`
+                    rounded-full
+                    px-5
+                    py-3
+                    font-medium
+                    transition-all
+                    ${
+                      ageGroups.includes(
+                        item
+                      )
+                        ? `
+                          bg-gradient-to-r
+                          from-sky-400
+                          to-purple-400
+                          text-white
+                          shadow-md
+                        `
+                        : `
+                          border
+                          border-slate-200
+                          hover:border-sky-300
+                          hover:bg-sky-50
+                        `
+                    }
+                  `}
+                  >
+                    {item}
+                  </button>
+                )
+              )}
+
+            </div>
+
+          </div>
+
+          {/* SUBMIT */}
+
+          <div className="pt-4">
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="
+              w-full
+              rounded-2xl
+              bg-gradient-to-r
+              from-sky-400
+              to-purple-400
+              py-4
+              text-lg
+              font-semibold
+              text-white
+              shadow-lg
+              transition-all
+              hover:scale-[1.01]
+            "
+            >
+              {loading
+                ? "Submitting Profile..."
+                : "Submit For Verification"}
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
 
     </div>
-  );
+
+  </div>
+);
 }

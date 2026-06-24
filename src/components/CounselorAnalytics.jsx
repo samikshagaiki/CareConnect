@@ -30,56 +30,84 @@ export default function CounselorAnalytics() {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-4">
+    <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
 
-      <div className="rounded-3xl border p-6">
-        <h3 className="font-semibold">
-          Assigned Patients
-        </h3>
+  <div className="
+rounded-3xl
+border
+border-slate-200
+bg-white
+p-6
+shadow-sm
+hover:shadow-md
+transition
+">
+    <p className="text-sm text-slate-500">
+      Assigned Patients
+    </p>
 
-        <p className="mt-3 text-4xl font-bold">
-          {
-            analytics.assignedPatients
-          }
-        </p>
-      </div>
+    <h3 className="mt-3 text-4xl font-bold">
+      {analytics.assignedPatients}
+    </h3>
+  </div>
 
-      <div className="rounded-3xl border p-6">
-        <h3 className="font-semibold">
-          Pending Assessments
-        </h3>
+  <div className="
+rounded-3xl
+border
+border-slate-200
+bg-white
+p-6
+shadow-sm
+hover:shadow-md
+transition
+">
+    <p className="text-sm text-slate-500">
+      Pending Assessments
+    </p>
 
-        <p className="mt-3 text-4xl font-bold">
-          {
-            analytics.pendingAssessments
-          }
-        </p>
-      </div>
+    <h3 className="mt-3 text-4xl font-bold">
+      {analytics.pendingAssessments}
+    </h3>
+  </div>
 
-      <div className="rounded-3xl border p-6">
-        <h3 className="font-semibold">
-          Completed Assessments
-        </h3>
+  <div className="
+rounded-3xl
+border
+border-slate-200
+bg-white
+p-6
+shadow-sm
+hover:shadow-md
+transition
+">
+    <p className="text-sm text-slate-500">
+      Completed Assessments
+    </p>
 
-        <p className="mt-3 text-4xl font-bold">
-          {
-            analytics.completedAssessments
-          }
-        </p>
-      </div>
+    <h3 className="mt-3 text-4xl font-bold">
+      {analytics.completedAssessments}
+    </h3>
+  </div>
 
-      <div className="rounded-3xl border p-6">
-        <h3 className="font-semibold">
-          Upcoming Sessions
-        </h3>
+  <div className="
+rounded-3xl
+border
+border-slate-200
+bg-white
+p-6
+shadow-sm
+hover:shadow-md
+transition
+">
+    <p className="text-sm text-slate-500">
+      Upcoming Sessions
+    </p>
 
-        <p className="mt-3 text-4xl font-bold">
-          {
-            analytics.upcomingSessions
-          }
-        </p>
-      </div>
+    <h3 className="mt-3 text-4xl font-bold">
+      {analytics.upcomingSessions}
+    </h3>
+  </div>
 
-    </div>
+</div>
   );
 }

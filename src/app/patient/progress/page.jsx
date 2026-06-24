@@ -37,204 +37,363 @@ export default function ProgressPage() {
     );
   }
 
-  return (
-    <div>
+ return (
+  <div className="space-y-8">
 
-      <h1 className="text-4xl font-bold">
-        Progress Dashboard
-      </h1>
+    {/* HERO */}
 
-      <p className="mt-2 text-muted-foreground">
-        Track your wellness journey.
-      </p>
+    <section
+      className="
+      relative
+      overflow-hidden
+      rounded-[40px]
+      bg-gradient-to-r
+      from-[#8EC5FC]
+      to-[#DCCCFD]
+      p-10
+      shadow-xl
+    "
+    >
+      <div className="relative z-10">
 
-      <div className="mt-8">
-  <ProgressCharts
-    moods={data.moods}
-    assessments={
-      data.assessments
-    }
-  />
-</div>
+        <h1 className="text-5xl font-bold text-white">
+          Progress Journey 🌸
+        </h1>
 
-      {/* Mood History */}
+        <p className="mt-4 text-lg text-white/90">
+          Every step forward matters.
+          Track your emotional growth,
+          wellness trends and counseling journey.
+        </p>
 
-      <div className="mt-8">
-        <h2 className="text-2xl font-bold">
-          Mood History
-        </h2>
-
-        <div className="mt-4 space-y-4">
-
-          {data.moods.map(
-            (mood) => (
-              <div
-                key={mood._id}
-                className="rounded-2xl border p-4"
-              >
-                <p>
-                  Mood:
-                  {" "}
-                  {mood.mood}
-                </p>
-
-                <p>
-                  Note:
-                  {" "}
-                  {mood.note}
-                </p>
-
-                <p className="text-sm text-muted-foreground">
-                  {new Date(
-                    mood.createdAt
-                  ).toLocaleString()}
-                </p>
-              </div>
-            )
-          )}
-
-        </div>
       </div>
 
-      {/* Assessment History */}
+      <div
+        className="
+        absolute
+        -right-16
+        -top-16
+        h-72
+        w-72
+        rounded-full
+        bg-white/10
+      "
+      />
 
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold">
-          Assessment History
-        </h2>
+    </section>
 
-        <div className="mt-4 space-y-4">
+    {/* STATS */}
 
-          {data.assessments.map(
-            (
-              assessment
-            ) => (
-              <div
-                key={
-                  assessment._id
-                }
-                className="rounded-2xl border p-4"
-              >
-                <p>
-                  {
-                    assessment
-                      .template
-                      ?.title
-                  }
-                </p>
+    <div className="grid gap-6 md:grid-cols-3">
 
-                <p>
-                  Score:
-                  {" "}
-                  {
-                    assessment.score
-                  }
-                </p>
+      <div
+        className="
+        rounded-[32px]
+        bg-gradient-to-r
+        from-[#8EC5FC]
+        to-[#A7D7FF]
+        p-8
+        text-white
+        shadow-lg
+      "
+      >
+        <h3 className="text-lg font-medium">
+          Mood Entries
+        </h3>
 
-                <p>
-                  Severity:
-                  {" "}
-                  {
-                    assessment.severity
-                  }
-                </p>
-
-                <p className="text-sm text-muted-foreground">
-                  {new Date(
-                    assessment.submittedAt
-                  ).toLocaleString()}
-                </p>
-              </div>
-            )
-          )}
-
-        </div>
+        <p className="mt-4 text-5xl font-bold">
+          {data.moods.length}
+        </p>
       </div>
 
-      {/* Counselor Notes */}
+      <div
+        className="
+        rounded-[32px]
+        bg-gradient-to-r
+        from-[#B388FF]
+        to-[#DCCCFD]
+        p-8
+        text-white
+        shadow-lg
+      "
+      >
+        <h3 className="text-lg font-medium">
+          Assessments
+        </h3>
 
-      <div className="mt-10">
-        <h2 className="text-2xl font-bold">
-          Counselor Feedback
-        </h2>
-
-        <div className="mt-4 space-y-4">
-
-          {data.counselorNotes.map(
-            (
-              note
-            ) => (
-              <div
-                key={
-                  note._id
-                }
-                className="rounded-2xl border p-4"
-              >
-                <p>
-                  {
-                    note.counselorNotes
-                  }
-                </p>
-
-                <p className="text-sm text-muted-foreground">
-                  {new Date(
-                    note.updatedAt
-                  ).toLocaleString()}
-                </p>
-              </div>
-            )
-          )}
-
-        </div>
+        <p className="mt-4 text-5xl font-bold">
+          {data.assessments.length}
+        </p>
       </div>
 
-      {/* Appointment History */}
+      <div
+        className="
+        rounded-[32px]
+        bg-gradient-to-r
+        from-[#8EC5FC]
+        to-[#DCCCFD]
+        p-8
+        text-white
+        shadow-lg
+      "
+      >
+        <h3 className="text-lg font-medium">
+          Appointments
+        </h3>
 
-      <div className="mt-10 mb-10">
-        <h2 className="text-2xl font-bold">
-          Appointment History
-        </h2>
-
-        <div className="mt-4 space-y-4">
-
-          {data.appointments.map(
-            (
-              appointment
-            ) => (
-              <div
-                key={
-                  appointment._id
-                }
-                className="rounded-2xl border p-4"
-              >
-                <p>
-                  Reason:
-                  {" "}
-                  {
-                    appointment.reason
-                  }
-                </p>
-
-                <p>
-                  Status:
-                  {" "}
-                  {
-                    appointment.status
-                  }
-                </p>
-
-                <p className="text-sm text-muted-foreground">
-                  {new Date(
-                    appointment.appointmentDate
-                  ).toLocaleString()}
-                </p>
-              </div>
-            )
-          )}
-
-        </div>
+        <p className="mt-4 text-5xl font-bold">
+          {data.appointments.length}
+        </p>
       </div>
 
     </div>
-  );
+
+    {/* CHARTS */}
+
+    <div
+  className="
+  rounded-[32px]
+  bg-white
+  p-6
+  shadow-lg
+  border
+  border-purple-100
+"
+>
+  <h2 className="text-2xl font-bold mb-4">
+    😊 Mood Trend
+  </h2>
+
+  <ProgressCharts
+    type="mood"
+    data={data.moods}
+  />
+</div>
+
+<div
+  className="
+  rounded-[32px]
+  bg-white
+  p-6
+  shadow-lg
+  border
+  border-purple-100
+"
+>
+  <h2 className="text-2xl font-bold mb-4">
+    📊 Assessment Trend
+  </h2>
+
+  <ProgressCharts
+    type="assessment"
+    data={data.assessments}
+  />
+</div>
+
+    {/* FEEDBACK + APPOINTMENTS */}
+
+    <div className="grid xl:grid-cols-2 gap-8">
+
+      <div
+        className="
+        rounded-[32px]
+        bg-white
+        p-8
+        shadow-lg
+        border
+        border-purple-100
+      "
+      >
+
+        <h2 className="text-2xl font-bold">
+          💜 Counselor Feedback
+        </h2>
+
+        <div className="mt-6 space-y-4">
+
+          {data.counselorNotes
+            ?.length > 0 ? (
+            data.counselorNotes.map(
+              (note) => (
+
+                <div
+                  key={note._id}
+                  className="
+                  rounded-2xl
+                  bg-[#F8F3FF]
+                  p-5
+                "
+                >
+                  <p>
+                    {
+                      note.counselorNotes
+                    }
+                  </p>
+
+                  <p
+                    className="
+                    mt-3
+                    text-sm
+                    text-slate-500
+                  "
+                  >
+                    {new Date(
+                      note.updatedAt
+                    ).toLocaleString()}
+                  </p>
+                </div>
+
+              )
+            )
+          ) : (
+            <p className="mt-4 text-slate-500">
+              No feedback available.
+            </p>
+          )}
+
+        </div>
+
+      </div>
+
+      <div
+        className="
+        rounded-[32px]
+        bg-white
+        p-8
+        shadow-lg
+        border
+        border-sky-100
+      "
+      >
+
+        <h2 className="text-2xl font-bold">
+          📅 Appointments
+        </h2>
+
+        <div className="mt-6 space-y-4">
+
+          {data.appointments
+            ?.length > 0 ? (
+            data.appointments.map(
+              (
+                appointment
+              ) => (
+
+                <div
+                  key={
+                    appointment._id
+                  }
+                  className="
+                  rounded-2xl
+                  bg-[#EEF8FF]
+                  p-5
+                "
+                >
+                  <p className="font-medium">
+                    {
+                      appointment.reason
+                    }
+                  </p>
+
+                  <p className="mt-2 text-slate-500">
+                    Status:
+                    {" "}
+                    {
+                      appointment.status
+                    }
+                  </p>
+
+                  <p className="mt-2 text-sm text-slate-500">
+                    {new Date(
+                      appointment.appointmentDate
+                    ).toLocaleString()}
+                  </p>
+                </div>
+
+              )
+            )
+          ) : (
+            <p className="mt-4 text-slate-500">
+              No appointments yet.
+            </p>
+          )}
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {/* WELLNESS TIMELINE */}
+
+    <div
+      className="
+      rounded-[32px]
+      bg-white
+      p-8
+      shadow-lg
+      border
+      border-purple-100
+    "
+    >
+
+      <h2 className="text-2xl font-bold">
+        🌱 Wellness Timeline
+      </h2>
+
+      <div className="mt-6 space-y-4 max-h-[400px] overflow-y-auto pr-2">
+
+        {data.moods.map((mood) => (
+
+          <div
+            key={mood._id}
+            className="
+            flex
+            gap-4
+            rounded-2xl
+            bg-[#FAFCFF]
+            p-5
+          "
+          >
+
+            <div
+              className="
+              mt-1
+              h-4
+              w-4
+              rounded-full
+              bg-gradient-to-r
+              from-[#8EC5FC]
+              to-[#DCCCFD]
+            "
+            />
+
+            <div>
+
+              <p className="font-semibold">
+                {mood.mood}
+              </p>
+
+              <p className="text-slate-500">
+                {mood.note}
+              </p>
+
+              <p className="mt-2 text-sm text-slate-400">
+                {new Date(
+                  mood.createdAt
+                ).toLocaleString()}
+              </p>
+
+            </div>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+);
 }

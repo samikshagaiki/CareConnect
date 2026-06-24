@@ -4,7 +4,8 @@ export default function PatientLayout({
   children,
 }) {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="min-h-screen flex bg-[#F7FBFF] relative overflow-hidden">
+
 
       <PatientSidebar />
 

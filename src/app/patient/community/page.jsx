@@ -240,244 +240,409 @@ async function deletePost(
     fetchPosts();
   }, []);
 
-  return (
-    <div>
-      <h1 className="text-4xl font-bold">
-        Community
+ return (
+  <div className="space-y-8">
+
+    {/* HEADER */}
+
+    <div
+      className="
+      rounded-[40px]
+      bg-gradient-to-r
+      from-[#8EC5FC]
+      to-[#DCCCFD]
+      p-10
+      text-white
+      shadow-xl
+    "
+    >
+      <h1 className="text-5xl font-bold">
+        Community Hub 💜
       </h1>
 
-      <p className="mt-2 text-muted-foreground">
-        Share experiences, seek
-        support, and learn from
-        others.
+      <p className="mt-3 text-lg text-white/90">
+        Share experiences, seek support and grow together.
       </p>
+    </div>
 
-      <div className="mt-8 rounded-3xl border bg-card p-6">
+    <div className="grid xl:grid-cols-[1fr_320px] gap-8">
 
-        <h2 className="mb-4 text-xl font-semibold">
-          Create Post
-        </h2>
+      {/* LEFT SECTION */}
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-4"
+      <div className="space-y-8">
+
+        {/* CREATE POST */}
+
+        <div
+          className="
+          rounded-[32px]
+          bg-white
+          p-8
+          shadow-lg
+          border border-purple-100
+        "
         >
-          <input
-            type="text"
-            placeholder="Post Title"
-            value={title}
-            onChange={(e) =>
-              setTitle(
-                e.target.value
-              )
-            }
-            className="w-full rounded-xl border p-3"
-            required
-          />
+          <h2 className="text-2xl font-bold text-slate-800">
+            Create A Post ✨
+          </h2>
 
-          <textarea
-            rows={5}
-            placeholder="What's on your mind?"
-            value={content}
-            onChange={(e) =>
-              setContent(
-                e.target.value
-              )
-            }
-            className="w-full rounded-xl border p-3"
-            required
-          />
+          <p className="mt-2 text-slate-500">
+            Share what's on your mind today.
+          </p>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-xl bg-primary px-6 py-3 text-primary-foreground"
+          <form
+            onSubmit={handleSubmit}
+            className="mt-6 space-y-4"
           >
-            {loading
-              ? "Posting..."
-              : "Create Post"}
-          </button>
-        </form>
 
-      </div>
+            <input
+              type="text"
+              placeholder="Post Title"
+              value={title}
+              onChange={(e) =>
+                setTitle(e.target.value)
+              }
+              required
+              className="
+                w-full
+                rounded-2xl
+                border
+                border-purple-100
+                bg-[#FAFCFF]
+                px-5
+                py-4
+                outline-none
+                focus:ring-4
+                focus:ring-purple-100
+              "
+            />
 
-      <div className="mt-10">
+            <textarea
+              rows={5}
+              placeholder="What's on your mind today?"
+              value={content}
+              onChange={(e) =>
+                setContent(e.target.value)
+              }
+              required
+              className="
+                w-full
+                rounded-2xl
+                border
+                border-purple-100
+                bg-[#FAFCFF]
+                p-5
+                outline-none
+                resize-none
+                focus:ring-4
+                focus:ring-purple-100
+              "
+            />
 
-        <h2 className="mb-4 text-2xl font-bold">
-          Community Feed
-        </h2>
+            <button
+              type="submit"
+              disabled={loading}
+              className="
+                rounded-2xl
+                bg-gradient-to-r
+                from-[#8EC5FC]
+                to-[#DCCCFD]
+                px-8
+                py-4
+                font-semibold
+                text-white
+                shadow-md
+              "
+            >
+              {loading
+                ? "Posting..."
+                : "Share Post"}
+            </button>
 
-        <div className="space-y-5">
+          </form>
+
+        </div>
+
+        {/* POSTS */}
+
+        <div className="space-y-6">
 
           {posts.map((post) => (
+
             <div
               key={post._id}
-              className="rounded-3xl border bg-card p-6"
+              className="
+              rounded-[32px]
+              bg-white
+              p-7
+              shadow-lg
+              border
+              border-purple-100
+            "
             >
 
               <div className="flex items-center justify-between">
 
-                <div>
+                <div className="flex items-center gap-4">
 
-                  <p className="font-semibold">
-                    {post.authorName}
-                  </p>
+                  <div
+                    className="
+                    h-12
+                    w-12
+                    rounded-full
+                    bg-gradient-to-r
+                    from-[#8EC5FC]
+                    to-[#DCCCFD]
+                    flex
+                    items-center
+                    justify-center
+                    text-white
+                    font-bold
+                  "
+                  >
+                    {post.authorName?.charAt(0)}
+                  </div>
 
-                  <p className="text-sm text-muted-foreground">
-                    {post.authorRole}
-                  </p>
+                  <div>
+
+                    <h4 className="font-semibold">
+                      {post.authorName}
+                    </h4>
+
+                    <p className="text-sm text-slate-500">
+                      {post.authorRole}
+                    </p>
+
+                  </div>
 
                 </div>
 
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-slate-400">
                   {new Date(
                     post.createdAt
-                  ).toLocaleString()}
+                  ).toLocaleDateString()}
                 </p>
 
               </div>
 
-              <h3 className="mt-4 text-xl font-semibold">
+              <h3 className="mt-5 text-2xl font-bold">
                 {post.title}
               </h3>
 
-              <p className="mt-3 whitespace-pre-wrap">
+              <p className="mt-4 whitespace-pre-wrap text-slate-600 leading-relaxed">
                 {post.content}
               </p>
 
-              <div className="mt-4 flex gap-4">
+              {/* ACTIONS */}
 
-  <button
-    onClick={() =>
-      handleLike(post._id)
-    }
-    className="rounded-lg border px-3 py-1"
-  >
-    ❤️ {
-      post.likes?.length || 0
-    }
-  </button>
+              <div className="mt-6 flex flex-wrap gap-3">
 
-  <button
-    onClick={() =>
-      fetchComments(
-        post._id
-      )
-    }
-    className="rounded-lg border px-3 py-1"
-  >
-    💬 {
-      comments[post._id]
-        ? "Hide"
-        : "View"
-    } Comments (
-    {
-      post.commentsCount ||
-      0
-    }
-    )
-  </button>
+                <button
+                  onClick={() =>
+                    handleLike(post._id)
+                  }
+                  className="
+                  rounded-full
+                  bg-pink-50
+                  px-4
+                  py-2
+                  text-pink-500
+                "
+                >
+                  ❤️ {post.likes?.length || 0}
+                </button>
 
-  {String(post.authorId) ===
-  currentUserId && (
-    <button
-      onClick={() =>
-        deletePost(
-          post._id
-        )
-      }
-      className="rounded-lg border px-3 py-1"
-    >
-      🗑 Delete
-    </button>
-  )}
+                <button
+                  onClick={() =>
+                    fetchComments(post._id)
+                  }
+                  className="
+                  rounded-full
+                  bg-sky-50
+                  px-4
+                  py-2
+                  text-sky-600
+                "
+                >
+                  💬 {post.commentsCount || 0}
+                </button>
 
-</div>
+                {String(post.authorId) ===
+                  currentUserId && (
+                  <button
+                    onClick={() =>
+                      deletePost(post._id)
+                    }
+                    className="
+                    rounded-full
+                    bg-red-50
+                    px-4
+                    py-2
+                    text-red-500
+                  "
+                  >
+                    Delete
+                  </button>
+                )}
 
-{comments[post._id] && (
-  <div className="mt-5 border-t pt-4">
+              </div>
 
-    <h4 className="mb-3 font-semibold">
-      Comments
-    </h4>
+              {/* COMMENTS */}
 
-    <div className="space-y-3">
+              {comments[post._id] && (
 
-      {comments[
-        post._id
-      ].map(
-        (comment) => (
-          <div
-            key={
-              comment._id
-            }
-            className="rounded-xl border p-3"
-          >
-            <p className="font-semibold">
-              {
-                comment.authorName
-              }
-            </p>
+                <div className="mt-6 border-t border-purple-100 pt-5">
 
-            <p>
-              {
-                comment.content
-              }
-            </p>
-          </div>
-        )
-      )}
+                  <div className="space-y-3">
 
-    </div>
+                    {comments[
+                      post._id
+                    ].map((comment) => (
 
-    <div className="mt-4 flex gap-2">
+                      <div
+                        key={comment._id}
+                        className="
+                        rounded-2xl
+                        bg-[#FAFCFF]
+                        p-4
+                      "
+                      >
 
-      <input
-        type="text"
-        placeholder="Write a comment..."
-        value={
-          commentInputs[
-            post._id
-          ] || ""
-        }
-        onChange={(e) =>
-          setCommentInputs(
-            (prev) => ({
-              ...prev,
+                        <p className="font-semibold">
+                          {comment.authorName}
+                        </p>
 
-              [post._id]:
-                e.target
-                  .value,
-            })
-          )
-        }
-        className="flex-1 rounded-xl border p-2"
-      />
+                        <p className="mt-2 text-slate-600">
+                          {comment.content}
+                        </p>
 
-      <button
-        onClick={() =>
-          addComment(
-            post._id
-          )
-        }
-        className="rounded-xl border px-4"
-      >
-        Post
-      </button>
+                      </div>
 
-    </div>
+                    ))}
 
-  </div>
-)}
+                  </div>
+
+                  <div className="mt-4 flex gap-3">
+
+                    <input
+                      type="text"
+                      placeholder="Write a supportive comment..."
+                      value={
+                        commentInputs[
+                          post._id
+                        ] || ""
+                      }
+                      onChange={(e) =>
+                        setCommentInputs(
+                          (prev) => ({
+                            ...prev,
+                            [post._id]:
+                              e.target.value,
+                          })
+                        )
+                      }
+                      className="
+                        flex-1
+                        rounded-2xl
+                        border
+                        border-purple-100
+                        px-4
+                        py-3
+                      "
+                    />
+
+                    <button
+                      onClick={() =>
+                        addComment(
+                          post._id
+                        )
+                      }
+                      className="
+                      rounded-2xl
+                      bg-gradient-to-r
+                      from-[#8EC5FC]
+                      to-[#DCCCFD]
+                      px-5
+                      text-white
+                    "
+                    >
+                      Post
+                    </button>
+
+                  </div>
+
+                </div>
+
+              )}
 
             </div>
-          ))}
 
-          
+          ))}
 
         </div>
 
       </div>
+
+      {/* RIGHT SIDEBAR */}
+
+      <div className="space-y-6">
+
+        <div className="rounded-[32px] bg-white p-6 shadow-lg">
+          <h3 className="font-bold text-xl">
+            🌱 Wellness Tip
+          </h3>
+
+          <p className="mt-3 text-slate-600">
+            Progress is not about perfection.
+            Small daily improvements matter.
+          </p>
+        </div>
+
+        <div className="rounded-[32px] bg-white p-6 shadow-lg">
+          <h3 className="font-bold text-xl">
+            💜 Community Stats
+          </h3>
+
+          <div className="mt-5 space-y-3">
+
+            <div className="flex justify-between">
+              <span>Posts</span>
+              <span>{posts.length}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Members</span>
+              <span>Growing</span>
+            </div>
+
+          </div>
+        </div>
+
+        <div
+          className="
+          rounded-[32px]
+          bg-gradient-to-r
+          from-[#8EC5FC]
+          to-[#DCCCFD]
+          p-6
+          text-white
+          shadow-lg
+        "
+        >
+          <h3 className="text-xl font-bold">
+            ✨ Daily Reminder
+          </h3>
+
+          <p className="mt-3">
+            You are stronger than you think,
+            and you don't have to face things alone.
+          </p>
+        </div>
+
+      </div>
+
     </div>
-  );
+
+  </div>
+);
 }

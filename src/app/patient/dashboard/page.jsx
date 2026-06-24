@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
@@ -10,19 +11,15 @@ import CounselorProfile from "@/models/CounselorProfile";
 import Appointment from "@/models/Appointment";
 import AssessmentResponse from "@/models/AssessmentResponse";
 
-
 export default async function DashboardPage() {
   const session =
-    await getServerSession(
-      authOptions
-    );
+    await getServerSession(authOptions);
 
   await connectDB();
 
   const profile =
     await PatientProfile.findOne({
-      userId:
-        session.user.id,
+      userId: session.user.id,
     }).lean();
 
   const todaysThought =
@@ -30,18 +27,13 @@ export default async function DashboardPage() {
 
   const completedAssessments =
     await AssessmentResponse.countDocuments({
-      patientId:
-        session.user.id,
+      patientId: session.user.id,
     });
 
   const latestPhq9 =
     await AssessmentResponse.findOne({
-      patientId:
-        session.user.id,
-
-      score: {
-        $gt: 0,
-      },
+      patientId: session.user.id,
+      score: { $gt: 0 },
     })
       .sort({
         submittedAt: -1,
@@ -50,9 +42,7 @@ export default async function DashboardPage() {
 
   const assignment =
     await CounselorAssignment.findOne({
-      patientId:
-        session.user.id,
-
+      patientId: session.user.id,
       status: "accepted",
     }).lean();
 
@@ -61,16 +51,13 @@ export default async function DashboardPage() {
   if (assignment) {
     counselor =
       await CounselorProfile.findOne({
-        userId:
-          assignment.counselorId,
+        userId: assignment.counselorId,
       }).lean();
   }
 
   const upcomingAppointment =
     await Appointment.findOne({
-      patientId:
-        session.user.id,
-
+      patientId: session.user.id,
       status: "accepted",
     })
       .sort({
@@ -78,163 +65,282 @@ export default async function DashboardPage() {
       })
       .lean();
 
+  const avatar =
+    profile?.gender === "female"
+      ? "/female-wellness.png"
+      : profile?.gender === "male"
+      ? "/male-wellness.png"
+      : "/default-wellness.png";
+
+  const cardStyle =
+    "rounded-[32px] bg-white border border-white shadow-lg p-6 hover:shadow-xl transition-all";
+
   return (
-    <div>
-      <h1 className="text-4xl font-bold">
-        Welcome Back,
-        {" "}
-        {profile?.anonymousName}
-        👋
-      </h1>
+    <div className="space-y-8">
+      {/* HERO */}
 
-      <p className="mt-2 text-muted-foreground">
-        Here&apos;s an overview of your wellness journey.
-      </p>
+      <section
+        className="
+        relative
+        overflow-hidden
+        rounded-[40px]
+        bg-linear-to-r
+        from-[#5aacfe]
+        to-[#c1a4fa]
+        p-10
+        shadow-xl
+      "
+      >
+        <div className="max-w-xl">
+          <h1 className="text-5xl font-bold text-white">
+            Welcome Back,
+            {" "}
+            {profile?.anonymousName}
+            🌸
+          </h1>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <p className="mt-4 text-lg text-white/90">
+            Continue your wellness journey and celebrate
+            every small step forward.
+          </p>
 
-        <div className="rounded-3xl border bg-card p-6">
-          <h3 className="font-semibold">
-            Today&apos;s Positive Thought
+          <div className="mt-8 flex gap-12">
+            <div>
+              <h3 className="text-3xl font-bold text-white">
+                {completedAssessments}
+              </h3>
+
+              <p className="text-white/80">
+                Assessments
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-3xl font-bold text-white">
+                {latestPhq9?.score ?? 0}
+              </h3>
+
+              <p className="text-white/80">
+                PHQ-9 Score
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-3xl font-bold text-white">
+                {upcomingAppointment ? "1" : "0"}
+              </h3>
+
+              <p className="text-white/80">
+                Appointments
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="absolute right-8 bottom-0 hidden xl:block">
+          <Image
+            src={avatar}
+            alt="Wellness Avatar"
+            width={260}
+            height={200}
+            className="drop-shadow-xl"
+          />
+        </div>
+      </section>
+
+      {/* MAIN CARDS */}
+
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className={cardStyle}>
+          <h3 className="font-semibold text-lg text-purple-500">
+            ✨ Today's Positive Thought
           </h3>
 
-          <p className="mt-3 text-muted-foreground">
+          <p className="mt-4 text-slate-600">
             {todaysThought}
           </p>
         </div>
 
-        <div className="rounded-3xl border bg-card p-6">
-          <h3 className="font-semibold">
-            Mood Check-In
+        <div className={cardStyle}>
+          <h3 className="font-semibold text-lg text-sky-500">
+            😊 Mood Check-In
           </h3>
 
-          <p className="mt-3">
+          <p className="mt-4 text-slate-600">
             How are you feeling today?
           </p>
+
+          <div className="mt-5 flex gap-3 text-3xl">
+            😊 😄 😐 😔 😢
+          </div>
         </div>
 
-        <div className="rounded-3xl border bg-card p-6">
-          <h3 className="font-semibold">
-            Journal
+        <div className={cardStyle}>
+          <h3 className="font-semibold text-lg text-purple-500">
+            📖 Journal
           </h3>
 
-          <p className="mt-3">
-            Write today&apos;s thoughts.
+          <p className="mt-4 text-slate-600">
+            Capture today&apos;s thoughts and reflections.
           </p>
         </div>
 
-        <div className="rounded-3xl border bg-card p-6">
-          <h3 className="font-semibold">
-            Community
+        <div className={cardStyle}>
+          <h3 className="font-semibold text-lg text-sky-500">
+            👥 Community
           </h3>
 
-          <p className="mt-3">
-            Connect with others.
+          <p className="mt-4 text-slate-600">
+            Connect with people who understand your
+            journey.
           </p>
         </div>
 
-        <div className="rounded-3xl border bg-card p-6">
-          <h3 className="font-semibold">
-            Assigned Counselor
+        <div
+          className="
+          rounded-4xl
+          bg-linear-to-br
+          from-white
+          to-[#F8F3FF]
+          border
+          border-purple-100
+          shadow-lg
+          p-6
+        "
+        >
+          <h3 className="font-semibold text-lg text-purple-500">
+            💜 Assigned Counselor
           </h3>
 
           {counselor ? (
-            <div className="mt-3">
-              <p className="font-medium">
+            <div className="mt-4">
+              <h4 className="font-semibold text-xl">
                 {counselor.fullName}
-              </p>
+              </h4>
 
-              <p className="mt-1 text-sm text-muted-foreground">
-                Experience:
-                {" "}
+              <p className="mt-2 text-slate-500">
                 {counselor.experience}
                 {" "}
-                years
+                Years Experience
               </p>
 
-              <p className="mt-1 text-sm text-muted-foreground">
-                Specializations:
-                {" "}
-                {counselor.specialization?.join(
-                  ", "
-                )}
+              <p className="mt-3 text-sm text-slate-500">
+                {counselor.specialization?.join(", ")}
               </p>
 
-              <p className="mt-1 text-sm text-muted-foreground">
-                Languages:
-                {" "}
-                {counselor.languages?.join(
-                  ", "
-                )}
+              <p className="mt-3 text-sm text-slate-500">
+                {counselor.languages?.join(", ")}
               </p>
             </div>
           ) : (
-            <p className="mt-3">
+            <p className="mt-4 text-slate-500">
               No counselor assigned yet.
             </p>
           )}
         </div>
 
-        <div className="rounded-3xl border bg-card p-6">
-          <h3 className="font-semibold">
-            Upcoming Appointment
+        <div
+          className="
+          rounded-4xl
+          bg-linear-to-br
+          from-white
+          to-[#EEF8FF]
+          border
+          border-sky-100
+          shadow-lg
+          p-6
+        "
+        >
+          <h3 className="font-semibold text-lg text-sky-500">
+            📅 Upcoming Appointment
           </h3>
 
           {upcomingAppointment ? (
-            <div className="mt-3">
-              <p>
+            <div className="mt-4">
+              <p className="font-semibold">
                 {new Date(
                   upcomingAppointment.appointmentDate
                 ).toLocaleString()}
               </p>
 
-              <p className="mt-2 text-sm text-muted-foreground">
-                {
-                  upcomingAppointment.reason
-                }
+              <p className="mt-3 text-slate-500">
+                {upcomingAppointment.reason}
               </p>
             </div>
           ) : (
-            <p className="mt-3">
+            <p className="mt-4 text-slate-500">
               No appointments scheduled.
             </p>
           )}
         </div>
+      </div>
 
-        <div className="rounded-3xl border bg-card p-6">
-          <h3 className="font-semibold">
+      {/* STATS */}
+
+      <div className="grid md:grid-cols-3 gap-6">
+        <div
+          className="
+          rounded-4xl
+          bg-linear-to-r
+          from-[#8EC5FC]
+          to-[#A7D7FF]
+          p-8
+          text-white
+          shadow-lg
+        "
+        >
+          <p className="font-medium">
             Assessments Completed
+          </p>
+
+          <h3 className="mt-4 text-5xl font-bold">
+            {completedAssessments}
+          </h3>
+        </div>
+
+        <div
+          className="
+          rounded-4xl
+          bg-linear-to-r
+          from-[#B388FF]
+          to-[#DCCCFD]
+          p-8
+          text-white
+          shadow-lg
+        "
+        >
+          <p className="font-medium">
+            Latest PHQ-9 Score
+          </p>
+
+          <h3 className="mt-4 text-5xl font-bold">
+            {latestPhq9?.score ?? 0}
           </h3>
 
-          <p className="mt-3 text-4xl font-bold">
-            {completedAssessments}
+          <p className="mt-2 text-white/90">
+            {latestPhq9?.severity ?? "No Data"}
           </p>
         </div>
 
-        <div className="rounded-3xl border bg-card p-6">
-          <h3 className="font-semibold">
-            Latest PHQ-9
+        <div
+          className="
+          rounded-4xl
+          bg-linear-to-r
+          from-[#8EC5FC]
+          to-[#DCCCFD]
+          p-8
+          text-white
+          shadow-lg
+        "
+        >
+          <p className="font-medium">
+            Upcoming Appointments
+          </p>
+
+          <h3 className="mt-4 text-5xl font-bold">
+            {upcomingAppointment ? "1" : "0"}
           </h3>
-
-          {latestPhq9 ? (
-            <div className="mt-3">
-              <p className="text-4xl font-bold">
-                {latestPhq9.score}
-              </p>
-
-              <p className="mt-1 text-muted-foreground">
-                {
-                  latestPhq9.severity
-                }
-              </p>
-            </div>
-          ) : (
-            <p className="mt-3">
-              No PHQ-9 completed yet.
-            </p>
-          )}
         </div>
-
       </div>
     </div>
   );

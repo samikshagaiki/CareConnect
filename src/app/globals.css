@@ -48,5 +48,29 @@
 
 body {
   @apply antialiased text-foreground;
-  background: #FAFAF7;
+  background: #F7FBFF;
+}
+
+/* Mood History Scrollbar */
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f7f3ff;
+  border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    #8ec5fc,
+    #dcccfd
+  );
+  border-radius: 999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  opacity: 0.8;
 }

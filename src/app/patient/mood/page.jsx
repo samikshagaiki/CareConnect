@@ -111,114 +111,278 @@ export default function MoodPage() {
     }
   }
 
+  const moodColors = {
+  very_happy:
+    "bg-pink-200 border-pink-300",
+
+  happy:
+    "bg-yellow-200 border-yellow-300",
+
+  neutral:
+    "bg-sky-200 border-sky-300",
+
+  sad:
+    "bg-blue-200 border-blue-300",
+
+  very_sad:
+    "bg-purple-200 border-purple-300",
+};
+
+const moodMap = {};
+
+history.forEach((entry) => {
+  const day = new Date(
+    entry.createdAt
+  ).getDate();
+
+  moodMap[day] = entry.mood;
+});
+
+const moodIcons = {
+  very_happy: "😄",
+  happy: "🙂",
+  neutral: "😐",
+  sad: "🙁",
+  very_sad: "😢",
+};
+
   useEffect(() => {
     fetchHistory();
   }, []);
 
-  return (
-    <div>
+ return (
+  <div className="space-y-8">
 
-      <h1 className="text-4xl font-bold">
+    {/* PAGE HEADER */}
+
+    <div className="relative">
+      <h1 className="text-5xl font-bold text-slate-800">
         Mood Tracking
+        <span className="ml-3 text-purple-400">✦</span>
       </h1>
 
-      <p className="mt-2 text-muted-foreground">
-        Track how you&apos;re feeling
-        throughout the day.
+      <p className="mt-3 text-slate-500 text-lg">
+        Track how you're feeling throughout the day.
       </p>
+    </div>
 
-      <div className="mt-8 rounded-3xl border bg-card p-6">
+    {/* MOOD INPUT CARD */}
 
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6"
-        >
+    <div
+      className="
+      relative
+      overflow-hidden
+      rounded-[40px]
+      bg-white
+      border
+      border-white
+      shadow-xl
+      p-10
+    "
+    >
 
-          <div>
+      <div className="absolute top-6 right-8 text-6xl opacity-30">
+        🌈
+      </div>
 
-            <h2 className="mb-3 font-semibold">
-              Select Your Mood
-            </h2>
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-8"
+      >
 
-            <div className="grid gap-3 md:grid-cols-5">
+        <div>
 
-              {moods.map((mood) => (
-                <button
-                  key={mood.value}
-                  type="button"
-                  onClick={() =>
-                    setSelectedMood(
-                      mood.value
-                    )
+          <h2 className="text-2xl font-bold text-slate-800">
+            Select Your Mood ✨
+          </h2>
+
+          <div className="mt-6 grid gap-4 md:grid-cols-5">
+
+            {moods.map((mood) => (
+              <button
+                key={mood.value}
+                type="button"
+                onClick={() =>
+                  setSelectedMood(mood.value)
+                }
+                className={`
+                  rounded-3xl
+                  border
+                  py-5
+                  px-4
+                  font-medium
+                  transition-all
+                  ${
+                    selectedMood === mood.value
+                      ? "bg-gradient-to-r from-sky-400 to-purple-400 text-white shadow-lg scale-105"
+                      : "bg-white border-purple-100 hover:border-purple-300"
                   }
-                  className={`rounded-xl border p-3 ${
-                    selectedMood ===
-                    mood.value
-                      ? "border-blue-500"
-                      : ""
-                  }`}
-                >
-                  {mood.label}
-                </button>
-              ))}
-
-            </div>
+                `}
+              >
+                {mood.label}
+              </button>
+            ))}
 
           </div>
+
+        </div>
+
+        <div className="grid lg:grid-cols-[1fr_220px] gap-6">
 
           <textarea
             value={note}
             onChange={(e) =>
-              setNote(
-                e.target.value
-              )
+              setNote(e.target.value)
             }
             placeholder="Add a note (optional)"
-            rows={4}
-            className="w-full rounded-xl border p-3"
+            rows={5}
+            className="
+              w-full
+              rounded-3xl
+              border
+              border-purple-100
+              p-5
+              outline-none
+              focus:ring-4
+              focus:ring-purple-100
+            "
           />
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="rounded-xl bg-primary px-6 py-3 text-primary-foreground"
+          {/* GRATITUDE NOTE */}
+
+          <div
+            className="
+            rounded-[30px]
+            bg-gradient-to-br
+            from-[#FFF7FC]
+            to-[#F6F0FF]
+            p-6
+            shadow-md
+            text-center
+          "
           >
-            {loading
-              ? "Saving..."
-              : "Save Mood"}
-          </button>
+            <h3 className="font-semibold text-slate-700">
+              Today I'm
+            </h3>
 
-        </form>
+            <h3 className="font-semibold text-slate-700">
+              Grateful For
+            </h3>
 
-      </div>
+            <div className="mt-6 text-5xl">
+              💜
+            </div>
 
-      <div className="mt-10">
+            <p className="mt-4 text-sm text-slate-500">
+              Small moments matter.
+            </p>
+          </div>
 
-        <h2 className="mb-4 text-2xl font-bold">
-          Mood History
+        </div>
+
+        <button
+          type="submit"
+          disabled={loading}
+          className="
+          rounded-2xl
+          bg-gradient-to-r
+          from-sky-400
+          to-purple-400
+          px-8
+          py-4
+          font-semibold
+          text-white
+          shadow-lg
+        "
+        >
+          {loading
+            ? "Saving..."
+            : "Save Mood"}
+        </button>
+
+      </form>
+
+    </div>
+
+    {/* HISTORY + PUZZLE */}
+
+    <div className="grid gap-8 xl:grid-cols-2">
+
+      {/* HISTORY */}
+
+       {/* HISTORY */}
+
+      <div
+        className="
+        rounded-[40px]
+        bg-white
+        shadow-xl
+        p-8
+        h-[700px]
+        flex
+        flex-col
+      "
+      >
+        <h2 className="text-3xl font-bold mb-6">
+          Mood History ✨
         </h2>
 
-        <div className="space-y-4">
+        <div
+          className="
+          flex-1
+          overflow-y-auto
+          pr-2
+          custom-scrollbar
+          space-y-4
+        "
+        >
 
           {history.map((entry) => (
             <div
               key={entry._id}
-              className="rounded-2xl border bg-card p-4"
+              className="
+              rounded-3xl
+              border
+              border-purple-100
+              bg-linear-to-r
+              from-[#FCF8FF]
+              to-[#F7FBFF]
+              p-5
+            "
             >
 
-              <p className="font-semibold">
-                {entry.mood}
-              </p>
+              <div className="flex gap-4">
 
-              <p className="mt-2 text-muted-foreground">
-                {entry.note}
-              </p>
+                <div className="text-4xl">
+                  {moodIcons[
+                    entry.mood
+                  ]}
+                </div>
 
-              <p className="mt-2 text-sm text-muted-foreground">
-                {new Date(
-                  entry.createdAt
-                ).toLocaleString()}
-              </p>
+                <div>
+
+                  <p className="font-semibold capitalize">
+                    {entry.mood.replace(
+                      "_",
+                      " "
+                    )}
+                  </p>
+
+                  {entry.note && (
+                    <p className="mt-2 text-slate-500">
+                      {entry.note}
+                    </p>
+                  )}
+
+                  <p className="mt-2 text-sm text-slate-400">
+                    {new Date(
+                      entry.createdAt
+                    ).toLocaleString()}
+                  </p>
+
+                </div>
+
+              </div>
 
             </div>
           ))}
@@ -227,6 +391,95 @@ export default function MoodPage() {
 
       </div>
 
+      {/* PUZZLE TRACKER */}
+
+      <div
+        className="
+        rounded-[40px]
+        bg-white
+        shadow-xl
+        p-8
+      "
+      >
+
+        <h2 className="text-3xl font-bold text-center">
+          💜 Mood Puzzle Tracker 💜
+        </h2>
+
+        <div className="mt-8">
+
+          <div className="grid grid-cols-7 gap-1">
+
+            {Array.from({
+  length: 31,
+}).map((_, index) => {
+
+  const day = index + 1;
+
+  const mood =
+    moodMap[day];
+
+  return (
+    <div
+      key={day}
+      className={`
+        aspect-square
+        rounded-xl
+        border
+        flex
+        items-center
+        justify-center
+        font-medium
+        transition-all
+        ${
+          mood
+            ? moodColors[mood]
+            : "bg-white border-purple-100"
+        }
+      `}
+    >
+      {day}
     </div>
   );
+})}
+
+          </div>
+
+          <div className="mt-8 space-y-3">
+
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full bg-pink-300" />
+              Very Happy
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full bg-yellow-300" />
+              Happy
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full bg-green-300" />
+              Neutral
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full bg-blue-300" />
+              Sad
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="h-4 w-4 rounded-full bg-purple-300" />
+              Very Sad
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+);
 }

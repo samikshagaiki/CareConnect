@@ -51,151 +51,319 @@ export default function AssessmentResponsesPage() {
     );
   }
 
-  return (
-    <div>
-      <h1 className="text-4xl font-bold">
+ return (
+  <div className="mx-auto max-w-7xl space-y-8">
+
+    {/* Header */}
+
+    <div
+      className="
+      rounded-[32px]
+      border
+      border-slate-200
+      bg-white
+      p-8
+      shadow-sm
+    "
+    >
+      <p className="text-sm font-medium uppercase tracking-wider text-blue-600">
+        Assessment Records
+      </p>
+
+      <h1 className="mt-2 text-4xl font-bold text-slate-800">
         Patient Assessment History
       </h1>
 
-      <p className="mt-2 text-muted-foreground">
-        Review all completed
-        assessments submitted by
-        your patients.
+      <p className="mt-3 text-slate-500">
+        Review completed assessments, analyze patient responses,
+        and monitor wellbeing trends over time.
       </p>
+    </div>
 
-      <div className="mt-8 space-y-8">
-        {responses.length === 0 ? (
-          <div className="rounded-3xl border p-6">
-            No assessment responses
-            found.
-          </div>
-        ) : (
-          responses.map(
-            (response) => (
-              <div
-                key={response._id}
-                className="rounded-3xl border bg-card p-6 shadow-sm"
-              >
-                {/* Header */}
+    {/* Stats */}
 
-                <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-                  <div>
-                    <h2 className="text-2xl font-semibold">
-                      {
-                        response
-                          .patient
-                          ?.anonymousName
-                      }
-                    </h2>
+    <div className="grid gap-5 md:grid-cols-3">
 
-                    <p className="text-sm text-muted-foreground">
-                      Submitted on{" "}
-                      {new Date(
-                        response.submittedAt
-                      ).toLocaleString()}
-                    </p>
-                  </div>
+      <div
+        className="
+        rounded-3xl
+        border
+        border-slate-200
+        bg-white
+        p-6
+        shadow-sm
+      "
+      >
+        <p className="text-sm text-slate-500">
+          Total Responses
+        </p>
 
-                  <span className="w-fit rounded-full bg-primary/10 px-3 py-1 text-sm font-medium">
+        <h2 className="mt-3 text-4xl font-bold text-slate-800">
+          {responses.length}
+        </h2>
+      </div>
+
+      <div
+        className="
+        rounded-3xl
+        border
+        border-slate-200
+        bg-white
+        p-6
+        shadow-sm
+      "
+      >
+        <p className="text-sm text-slate-500">
+          PHQ-9 Responses
+        </p>
+
+        <h2 className="mt-3 text-4xl font-bold text-blue-600">
+          {
+            responses.filter(
+              (r) => r.score > 0
+            ).length
+          }
+        </h2>
+      </div>
+
+      <div
+        className="
+        rounded-3xl
+        border
+        border-slate-200
+        bg-white
+        p-6
+        shadow-sm
+      "
+      >
+        <p className="text-sm text-slate-500">
+          Custom Assessments
+        </p>
+
+        <h2 className="mt-3 text-4xl font-bold text-slate-800">
+          {
+            responses.filter(
+              (r) =>
+                r.answers?.length > 0
+            ).length
+          }
+        </h2>
+      </div>
+
+    </div>
+
+    {/* Content */}
+
+    {responses.length === 0 ? (
+
+      <div
+        className="
+        rounded-[32px]
+        border
+        border-slate-200
+        bg-white
+        p-10
+        text-center
+        shadow-sm
+      "
+      >
+        <h3 className="text-xl font-semibold text-slate-700">
+          No Responses Found
+        </h3>
+
+        <p className="mt-2 text-slate-500">
+          Completed patient assessments will appear here.
+        </p>
+      </div>
+
+    ) : (
+
+      <div className="space-y-6">
+
+        {responses.map(
+          (response) => (
+
+            <div
+              key={response._id}
+              className="
+              rounded-[32px]
+              border
+              border-slate-200
+              bg-white
+              p-8
+              shadow-sm
+            "
+            >
+
+              {/* Top */}
+
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+
+                <div>
+
+                  <h2 className="text-2xl font-bold text-slate-800">
                     {
-                      response
-                        .template
-                        ?.title
+                      response.patient
+                        ?.anonymousName
                     }
-                  </span>
+                  </h2>
+
+                  <p className="mt-2 text-slate-500">
+                    Submitted on{" "}
+                    {new Date(
+                      response.submittedAt
+                    ).toLocaleString()}
+                  </p>
+
                 </div>
 
-                {/* PHQ9 */}
+                <span
+                  className="
+                  w-fit
+                  rounded-full
+                  bg-blue-50
+                  px-4
+                  py-2
+                  text-sm
+                  font-medium
+                  text-blue-700
+                "
+                >
+                  {
+                    response.template
+                      ?.title
+                  }
+                </span>
 
-                {response.score >
-                  0 && (
-                  <div className="mt-6 rounded-2xl border p-4">
-                    <h3 className="font-semibold">
-                      Assessment
-                      Summary
-                    </h3>
-
-                    <div className="mt-3 grid gap-4 md:grid-cols-2">
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Score
-                        </p>
-
-                        <p className="text-2xl font-bold">
-                          {
-                            response.score
-                          }
-                        </p>
-                      </div>
-
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Severity
-                        </p>
-
-                        <p className="text-lg font-semibold">
-                          {
-                            response.severity
-                          }
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Custom Assessment */}
-
-                {response.answers
-                  ?.length >
-                  0 &&
-                  response
-                    .template
-                    ?.questions && (
-                    <div className="mt-6">
-                      <h3 className="mb-4 text-lg font-semibold">
-                        Responses
-                      </h3>
-
-                      <div className="space-y-4">
-                        {response.template.questions.map(
-                          (
-                            question,
-                            index
-                          ) => (
-                            <div
-                              key={
-                                index
-                              }
-                              className="rounded-2xl border p-4"
-                            >
-                              <p className="font-medium">
-                                {
-                                  question.question
-                                }
-                              </p>
-
-                              <p className="mt-3 text-muted-foreground">
-                                Answer:
-                                {" "}
-                                {
-                                  OPTIONS[
-                                    response.answers[
-                                      index
-                                    ]
-                                  ]
-                                }
-                              </p>
-                            </div>
-                          )
-                        )}
-                      </div>
-                    </div>
-                  )}
               </div>
-            )
+
+              {/* PHQ-9 */}
+
+              {response.score > 0 && (
+
+                <div
+                  className="
+                  mt-6
+                  grid
+                  gap-4
+                  md:grid-cols-2
+                "
+                >
+
+                  <div
+                    className="
+                    rounded-3xl
+                    bg-slate-50
+                    p-6
+                  "
+                  >
+                    <p className="text-sm text-slate-500">
+                      Score
+                    </p>
+
+                    <h3 className="mt-2 text-4xl font-bold text-blue-600">
+                      {response.score}
+                    </h3>
+                  </div>
+
+                  <div
+                    className="
+                    rounded-3xl
+                    bg-slate-50
+                    p-6
+                  "
+                  >
+                    <p className="text-sm text-slate-500">
+                      Severity
+                    </p>
+
+                    <h3 className="mt-2 text-xl font-semibold text-slate-800">
+                      {response.severity}
+                    </h3>
+                  </div>
+
+                </div>
+
+              )}
+
+              {/* Custom Assessment */}
+
+              {response.answers?.length > 0 &&
+                response.template?.questions && (
+
+                <div className="mt-8">
+
+                  <h3 className="mb-5 text-lg font-semibold text-slate-800">
+                    Patient Responses
+                  </h3>
+
+                  <div className="space-y-4">
+
+                    {response.template.questions.map(
+                      (
+                        question,
+                        index
+                      ) => (
+
+                        <div
+                          key={index}
+                          className="
+                          rounded-2xl
+                          border
+                          border-slate-200
+                          p-5
+                        "
+                        >
+
+                          <p className="font-medium text-slate-800">
+                            Q{index + 1}.{" "}
+                            {
+                              question.question
+                            }
+                          </p>
+
+                          <div
+                            className="
+                            mt-4
+                            inline-flex
+                            rounded-full
+                            bg-slate-100
+                            px-4
+                            py-2
+                            text-sm
+                            font-medium
+                            text-slate-700
+                          "
+                          >
+                            {
+                              OPTIONS[
+                                response.answers[
+                                  index
+                                ]
+                              ]
+                            }
+                          </div>
+
+                        </div>
+
+                      )
+                    )}
+
+                  </div>
+
+                </div>
+
+              )}
+
+            </div>
+
           )
         )}
+
       </div>
-    </div>
-  );
+
+    )}
+
+  </div>
+);
 }
