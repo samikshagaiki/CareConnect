@@ -153,7 +153,7 @@ export default function PHQ9Page() {
           items-center
           justify-center
           rounded-full
-          bg-gradient-to-r
+          bg-linear-to-r
           from-[#8EC5FC]
           to-[#DCCCFD]
           text-5xl
@@ -225,7 +225,7 @@ export default function PHQ9Page() {
       relative
       overflow-hidden
       rounded-[40px]
-      bg-gradient-to-r
+      bg-linear-to-r
       from-[#8EC5FC]
       to-[#DCCCFD]
       p-10
@@ -268,7 +268,7 @@ export default function PHQ9Page() {
 
     <div
       className="
-      rounded-[32px]
+      rounded-4xl
       bg-white
       border
       border-purple-100
@@ -300,7 +300,7 @@ export default function PHQ9Page() {
         <div
           className="
           h-full
-          bg-gradient-to-r
+          bg-linear-to-r
           from-[#8EC5FC]
           to-[#DCCCFD]
         "
@@ -333,7 +333,7 @@ export default function PHQ9Page() {
           <div
             key={index}
             className="
-            rounded-[32px]
+            rounded-4xl
             bg-white
             border
             border-purple-100
@@ -352,7 +352,7 @@ export default function PHQ9Page() {
                 items-center
                 justify-center
                 rounded-full
-                bg-gradient-to-r
+                bg-linear-to-r
                 from-[#8EC5FC]
                 to-[#DCCCFD]
                 text-white
@@ -425,8 +425,8 @@ export default function PHQ9Page() {
         disabled={loading}
         className="
         w-full
-        rounded-[24px]
-        bg-gradient-to-r
+        rounded-3xl
+        bg-linear-to-r
         from-[#8EC5FC]
         to-[#DCCCFD]
         py-5

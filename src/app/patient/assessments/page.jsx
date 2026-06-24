@@ -244,7 +244,7 @@ export default function AssessmentsPage() {
           </h3>
 
           <p className="mt-2 text-slate-500">
-            Your counselor hasn't assigned any assessments yet.
+            Your counselor hasn&apos;t assigned any assessments yet.
           </p>
         </div>
 

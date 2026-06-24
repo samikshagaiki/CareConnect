@@ -438,20 +438,6 @@ return (
                     </p>
                   </div>
 
-                  <span
-                    className="
-                    rounded-full
-                    bg-green-100
-                    px-3
-                    py-1
-                    text-xs
-                    font-medium
-                    text-green-700
-                  "
-                  >
-                    Scheduled
-                  </span>
-
                 </div>
 
                 <div className="mt-5 space-y-3">

@@ -5,7 +5,6 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 
 import Appointment from "@/models/Appointment";
-import PatientProfile from "@/models/PatientProfile";
 
 export async function GET() {
   try {
@@ -17,11 +16,12 @@ export async function GET() {
     if (
       !session ||
       session.user.role !==
-        "counselor"
+        "patient"
     ) {
       return NextResponse.json(
         {
           success: false,
+          message: "Unauthorized",
         },
         {
           status: 403,
@@ -31,16 +31,29 @@ export async function GET() {
 
     await connectDB();
 
-    // Auto mark expired appointments as missed
+    const now = new Date();
+
+    // Mark all past accepted/upcoming appointments as missed
 
     await Appointment.updateMany(
       {
+        patientId:
+          session.user.id,
+
         appointmentDate: {
-          $lt: new Date(),
+          $lt: now,
         },
 
-        sessionStatus:
-          "upcoming",
+        status: {
+          $in: ["accepted"],
+        },
+
+        sessionStatus: {
+          $nin: [
+            "completed",
+            "missed",
+          ],
+        },
       },
       {
         $set: {
@@ -50,47 +63,23 @@ export async function GET() {
       }
     );
 
-    // Fetch only future appointments
-
     const appointments =
       await Appointment.find({
-        counselorId:
+        patientId:
           session.user.id,
-
-        status: "accepted",
-
-        sessionStatus:
-          "upcoming",
-
-        appointmentDate: {
-          $gt: new Date(),
-        },
-      }).lean();
-
-    const enriched =
-      await Promise.all(
-        appointments.map(
-          async (
-            appointment
-          ) => {
-            const patient =
-              await PatientProfile.findOne({
-                userId:
-                  appointment.patientId,
-              }).lean();
-
-            return {
-              ...appointment,
-              patient,
-            };
-          }
+      })
+        .populate(
+          "counselorId"
         )
-      );
+        .sort({
+          appointmentDate:
+            -1,
+        })
+        .lean();
 
     return NextResponse.json({
       success: true,
-      appointments:
-        enriched,
+      appointments,
     });
   } catch (error) {
     console.error(error);
@@ -98,6 +87,8 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
+        message:
+          "Something went wrong",
       },
       {
         status: 500,

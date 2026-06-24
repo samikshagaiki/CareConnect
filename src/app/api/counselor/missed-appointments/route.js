@@ -5,7 +5,6 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 
 import Appointment from "@/models/Appointment";
-import PatientProfile from "@/models/PatientProfile";
 
 export async function GET() {
   try {
@@ -22,6 +21,7 @@ export async function GET() {
       return NextResponse.json(
         {
           success: false,
+          message: "Unauthorized",
         },
         {
           status: 403,
@@ -31,27 +31,6 @@ export async function GET() {
 
     await connectDB();
 
-    // Auto mark expired appointments as missed
-
-    await Appointment.updateMany(
-      {
-        appointmentDate: {
-          $lt: new Date(),
-        },
-
-        sessionStatus:
-          "upcoming",
-      },
-      {
-        $set: {
-          sessionStatus:
-            "missed",
-        },
-      }
-    );
-
-    // Fetch only future appointments
-
     const appointments =
       await Appointment.find({
         counselorId:
@@ -60,37 +39,19 @@ export async function GET() {
         status: "accepted",
 
         sessionStatus:
-          "upcoming",
-
-        appointmentDate: {
-          $gt: new Date(),
-        },
-      }).lean();
-
-    const enriched =
-      await Promise.all(
-        appointments.map(
-          async (
-            appointment
-          ) => {
-            const patient =
-              await PatientProfile.findOne({
-                userId:
-                  appointment.patientId,
-              }).lean();
-
-            return {
-              ...appointment,
-              patient,
-            };
-          }
+          "missed",
+      })
+        .populate(
+          "patient"
         )
-      );
+        .sort({
+          appointmentDate:
+            -1,
+        });
 
     return NextResponse.json({
       success: true,
-      appointments:
-        enriched,
+      appointments,
     });
   } catch (error) {
     console.error(error);

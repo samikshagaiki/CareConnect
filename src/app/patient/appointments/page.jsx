@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 import {
   Calendar,
   Clock,
@@ -18,6 +19,70 @@ export default function AppointmentsPage() {
 
   const [loading, setLoading] =
     useState(false);
+
+  const [
+  appointments,
+  setAppointments,
+] = useState([]);
+
+const [
+  upcomingAppointments,
+  setUpcomingAppointments,
+] = useState([]);
+
+const [
+  completedAppointments,
+  setCompletedAppointments,
+] = useState([]);
+
+const [
+  missedAppointments,
+  setMissedAppointments,
+] = useState([]);
+
+async function fetchAppointments() {
+  try {
+    const response =
+      await fetch(
+        "/api/patient/appointments"
+      );
+
+    const data =
+      await response.json();
+
+    if (data.success) {
+      setAppointments(
+        data.appointments
+      );
+
+      setUpcomingAppointments(
+        data.appointments.filter(
+          (appointment) =>
+            appointment.sessionStatus ===
+            "upcoming"
+        )
+      );
+
+      setCompletedAppointments(
+        data.appointments.filter(
+          (appointment) =>
+            appointment.sessionStatus ===
+            "completed"
+        )
+      );
+
+      setMissedAppointments(
+        data.appointments.filter(
+          (appointment) =>
+            appointment.sessionStatus ===
+            "missed"
+        )
+      );
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -58,7 +123,9 @@ export default function AppointmentsPage() {
       );
 
       setDate("");
-      setReason("");
+setReason("");
+
+fetchAppointments();
     } catch {
       alert(
         "Something went wrong"
@@ -67,6 +134,10 @@ export default function AppointmentsPage() {
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+  fetchAppointments();
+}, []);
 
   return (
     <div className="space-y-8">
@@ -78,7 +149,7 @@ export default function AppointmentsPage() {
         relative
         overflow-hidden
         rounded-[40px]
-        bg-gradient-to-r
+        bg-linear-to-r
         from-[#8EC5FC]
         to-[#DCCCFD]
         p-10
@@ -549,6 +620,219 @@ export default function AppointmentsPage() {
         </div>
 
       </div>
+
+      {/* APPOINTMENT HISTORY */}
+
+<div className="space-y-8">
+
+  {/* STATS */}
+
+  <div className="grid gap-5 md:grid-cols-4">
+
+    <div className="rounded-3xl border bg-white p-6 shadow-sm">
+      <p className="text-sm text-slate-500">
+        Total Requests
+      </p>
+
+      <h2 className="mt-2 text-4xl font-bold">
+        {appointments.length}
+      </h2>
+    </div>
+
+    <div className="rounded-3xl border bg-white p-6 shadow-sm">
+      <p className="text-sm text-slate-500">
+        Upcoming
+      </p>
+
+      <h2 className="mt-2 text-4xl font-bold text-blue-600">
+        {upcomingAppointments.length}
+      </h2>
+    </div>
+
+    <div className="rounded-3xl border bg-white p-6 shadow-sm">
+      <p className="text-sm text-slate-500">
+        Completed
+      </p>
+
+      <h2 className="mt-2 text-4xl font-bold text-green-600">
+        {completedAppointments.length}
+      </h2>
+    </div>
+
+    <div className="rounded-3xl border bg-white p-6 shadow-sm">
+      <p className="text-sm text-slate-500">
+        Missed
+      </p>
+
+      <h2 className="mt-2 text-4xl font-bold text-red-600">
+        {missedAppointments.length}
+      </h2>
+    </div>
+
+  </div>
+
+  {/* UPCOMING */}
+
+  <section>
+
+    <h2 className="mb-5 text-2xl font-bold">
+      Upcoming Sessions
+    </h2>
+
+    <div className="space-y-4">
+
+      {upcomingAppointments.map(
+        (appointment) => (
+
+          <div
+            key={appointment._id}
+            className="
+            rounded-3xl
+            border
+            bg-white
+            p-6
+            shadow-sm
+          "
+          >
+
+            <div className="flex justify-between">
+
+              <div>
+
+                <h3 className="font-semibold">
+                  Scheduled Session
+                </h3>
+
+                <p className="mt-2 text-slate-500">
+                  {new Date(
+                    appointment.appointmentDate
+                  ).toLocaleString()}
+                </p>
+
+              </div>
+
+              <span
+                className="
+                rounded-full
+                bg-blue-100
+                px-3
+                py-1
+                text-sm
+                text-blue-700
+              "
+              >
+                Upcoming
+              </span>
+
+            </div>
+
+            <p className="mt-4">
+              {appointment.reason}
+            </p>
+
+          </div>
+
+        )
+      )}
+
+    </div>
+
+  </section>
+
+  {/* COMPLETED */}
+
+  <section>
+
+    <h2 className="mb-5 text-2xl font-bold text-green-700">
+      Completed Sessions
+    </h2>
+
+    <div className="space-y-4">
+
+      {completedAppointments.map(
+        (appointment) => (
+
+          <div
+            key={appointment._id}
+            className="
+            rounded-3xl
+            border
+            bg-green-50
+            p-6
+          "
+          >
+
+            <p className="font-semibold">
+              Session Completed
+            </p>
+
+            <p className="mt-2 text-slate-500">
+              {new Date(
+                appointment.appointmentDate
+              ).toLocaleString()}
+            </p>
+
+            <p className="mt-4">
+              {appointment.reason}
+            </p>
+
+          </div>
+
+        )
+      )}
+
+    </div>
+
+  </section>
+
+  {/* MISSED */}
+
+  <section>
+
+    <h2 className="mb-5 text-2xl font-bold text-red-700">
+      Missed Sessions
+    </h2>
+
+    <div className="space-y-4">
+
+      {missedAppointments.map(
+        (appointment) => (
+
+          <div
+            key={appointment._id}
+            className="
+            rounded-3xl
+            border
+            border-red-200
+            bg-red-50
+            p-6
+          "
+          >
+
+            <p className="font-semibold">
+              Session Missed
+            </p>
+
+            <p className="mt-2 text-slate-500">
+              {new Date(
+                appointment.appointmentDate
+              ).toLocaleString()}
+            </p>
+
+            <p className="mt-4">
+              {appointment.reason}
+            </p>
+
+          </div>
+
+        )
+      )}
+
+    </div>
+
+  </section>
+
+</div>
 
     </div>
   );

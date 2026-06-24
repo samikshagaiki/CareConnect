@@ -22,6 +22,7 @@ export async function GET() {
       return NextResponse.json(
         {
           success: false,
+          message: "Unauthorized",
         },
         {
           status: 403,
@@ -31,13 +32,45 @@ export async function GET() {
 
     await connectDB();
 
+    const now = new Date();
+
+    // Mark old accepted appointments as missed
+
+    await Appointment.updateMany(
+      {
+        counselorId:
+          session.user.id,
+
+        appointmentDate: {
+          $lt: now,
+        },
+
+        status: "accepted",
+
+        sessionStatus: {
+          $nin: [
+            "completed",
+            "missed",
+          ],
+        },
+      },
+      {
+        $set: {
+          sessionStatus:
+            "missed",
+        },
+      }
+    );
+
     const appointments =
       await Appointment.find({
         counselorId:
           session.user.id,
-
-        status: "pending",
-      }).lean();
+      })
+        .sort({
+          appointmentDate: -1,
+        })
+        .lean();
 
     const enriched =
       await Promise.all(
@@ -45,7 +78,7 @@ export async function GET() {
           async (
             appointment
           ) => {
-            const profile =
+            const patient =
               await PatientProfile.findOne({
                 userId:
                   appointment.patientId,
@@ -53,8 +86,7 @@ export async function GET() {
 
             return {
               ...appointment,
-              patient:
-                profile,
+              patient,
             };
           }
         )
@@ -71,6 +103,8 @@ export async function GET() {
     return NextResponse.json(
       {
         success: false,
+        message:
+          "Something went wrong",
       },
       {
         status: 500,

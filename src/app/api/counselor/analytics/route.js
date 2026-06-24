@@ -57,26 +57,53 @@ export async function GET() {
           session.user.id,
       });
 
-    const upcomingSessions =
-      await Appointment.countDocuments({
-        counselorId:
-          session.user.id,
+    const now = new Date();
 
-        status:
-          "accepted",
-      });
+const appointments =
+  await Appointment.find({
+    counselorId:
+      session.user.id,
+  });
+
+const upcomingSessions =
+  appointments.filter(
+    (appointment) =>
+      appointment.status ===
+        "accepted" &&
+      new Date(
+        appointment.appointmentDate
+      ) > now
+  ).length;
+
+const completedSessions =
+  appointments.filter(
+    (appointment) =>
+      appointment.sessionStatus ===
+      "completed"
+  ).length;
+
+const missedSessions =
+  appointments.filter(
+    (appointment) =>
+      appointment.sessionStatus ===
+      "missed"
+  ).length;
 
     return NextResponse.json({
-      success: true,
+  success: true,
 
-      assignedPatients,
+  assignedPatients,
 
-      pendingAssessments,
+  pendingAssessments,
 
-      completedAssessments,
+  completedAssessments,
 
-      upcomingSessions,
-    });
+  upcomingSessions,
+
+  completedSessions,
+
+  missedSessions,
+});
   } catch (error) {
     console.error(error);
 
