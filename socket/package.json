@@ -1,7 +1,6 @@
 {
   "name": "careconnect-socket",
   "version": "1.0.0",
-  "private": true,
   "main": "socket-server.js",
   "scripts": {
     "start": "node socket-server.js"
