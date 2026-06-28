@@ -82,7 +82,7 @@ export default function Features() {
           </h2>
 
           <p className="mt-6 max-w-2xl mx-auto text-lg text-slate-600 font-medium">
-            Connect Care combines AI support,
+            CareConnect combines AI support,
             mood tracking, journaling,
             counseling and community into
             one platform.

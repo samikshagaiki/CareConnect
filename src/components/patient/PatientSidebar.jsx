@@ -103,14 +103,14 @@ export default function PatientSidebar({
       <div className="flex items-center gap-3 mb-10">
         <Image
           src="/logo.png"
-          alt="Connect Care"
+          alt="CareConnect"
           width={55}
           height={55}
         />
 
         <div>
           <h2 className="font-bold text-2xl">
-            Connect Care
+            CareConnect
           </h2>
 
           <p className="text-xs text-slate-500">

@@ -95,7 +95,7 @@ export default function SignupPage() {
 
           <Image
             src="/logo.png"
-            alt="Connect Care"
+            alt="CareConnect"
             width={55}
             height={55}
           />
@@ -103,7 +103,7 @@ export default function SignupPage() {
           <div>
 
             <h1 className="text-2xl font-bold sm:text-3xl">
-              Connect Care
+              CareConnect
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-500">
@@ -153,7 +153,7 @@ export default function SignupPage() {
             sm:text-lg
           "
         >
-          Join Connect Care and take your first step toward emotional
+          Join CareConnect and take your first step toward emotional
           wellbeing.
         </p>
 

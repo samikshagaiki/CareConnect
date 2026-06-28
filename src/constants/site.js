@@ -1,5 +1,5 @@
 export const siteConfig = {
-  name: "Connect Care",
+  name: "CareConnect",
 
   description:
     "A safe space for mental wellness, emotional support and professional guidance.",

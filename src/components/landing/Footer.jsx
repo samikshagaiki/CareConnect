@@ -49,7 +49,7 @@ export default function Footer() {
           <div>
 
             <h3 className="text-3xl font-bold">
-              Connect Care
+              CareConnect
             </h3>
 
             <p className="mt-5 text-slate-600 leading-relaxed">
@@ -139,7 +139,7 @@ export default function Footer() {
         <div className="mt-20 border-t pt-8 flex flex-col md:flex-row justify-between text-slate-500">
 
           <p>
-            © {new Date().getFullYear()} Connect Care.
+            © {new Date().getFullYear()} CareConnect.
             All rights reserved.
           </p>
 

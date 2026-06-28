@@ -50,7 +50,7 @@ export default function Navbar() {
         >
           <Image
             src="/logo.png"
-            alt="Connect Care"
+            alt="CareConnect"
             width={100}
             height={100}
             className="h-22 w-22 mt-4"

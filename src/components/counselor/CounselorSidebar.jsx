@@ -61,7 +61,7 @@ export default function CounselorSidebar({
 >
       <div className="mb-10">
         <h2 className="text-2xl font-bold">
-          Connect Care
+          CareConnect
         </h2>
 
         <p className="text-sm text-slate-500">

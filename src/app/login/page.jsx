@@ -91,7 +91,7 @@ export default function LoginPage() {
         w-full
         max-w-7xl
         overflow-hidden
-        rounded-[32px]
+        rounded-4xl
         lg:rounded-[40px]
         bg-white
         shadow-2xl
@@ -117,7 +117,7 @@ export default function LoginPage() {
 
           <Image
             src="/logo.png"
-            alt="Connect Care"
+            alt="CareConnect"
             width={55}
             height={55}
           />
@@ -125,7 +125,7 @@ export default function LoginPage() {
           <div>
 
             <h1 className="text-2xl font-bold sm:text-3xl">
-              Connect Care
+              CareConnect
             </h1>
 
             <p className="text-xs sm:text-sm text-slate-500">
@@ -273,7 +273,7 @@ export default function LoginPage() {
             text-sm
           "
         >
-          Don't have an account?
+          Don&apos;t have an account?
 
           <Link
             href="/signup"
@@ -316,7 +316,7 @@ export default function LoginPage() {
           className="
             h-auto
             w-[90%]
-            max-w-[620px]
+            max-w-155
             object-contain
             drop-shadow-xl
             transition

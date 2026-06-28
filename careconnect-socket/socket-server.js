@@ -1,13 +1,22 @@
 const { Server } = require("socket.io");
 
-const io = new Server(4000, {
+const PORT =
+  process.env.PORT || 4000;
+
+const CLIENT_URL =
+  process.env.CLIENT_URL ||
+  "http://localhost:3000";
+
+const io = new Server(PORT, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: CLIENT_URL,
     credentials: true,
   },
 });
 
-console.log("✅ Socket Server Running on Port 4000");
+console.log(
+  `✅ Socket Server Running on Port ${PORT}`
+);
 
 const onlineUsers = new Map();
 

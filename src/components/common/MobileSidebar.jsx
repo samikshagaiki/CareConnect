@@ -30,7 +30,7 @@ export default function MobileSidebar({ children }) {
         </button>
 
         <h2 className="text-xl font-bold">
-          Connect Care
+          CareConnect
         </h2>
       </div>
 
@@ -75,7 +75,7 @@ export default function MobileSidebar({ children }) {
         <div className="flex items-center justify-between p-6">
 
           <h2 className="text-2xl font-bold">
-            Connect Care
+            CareConnect
           </h2>
 
           <button

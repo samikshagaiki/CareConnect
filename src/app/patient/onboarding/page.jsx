@@ -144,7 +144,7 @@ export default function PatientOnboardingPage() {
       "
       >
         <h1 className="text-5xl font-bold text-white">
-          Welcome to Connect Care 🌸
+          Welcome to CareConnect 🌸
         </h1>
 
         <p className="mt-4 text-lg text-white/90 max-w-2xl">
