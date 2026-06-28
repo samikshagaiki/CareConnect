@@ -30,17 +30,41 @@ export default function LoginPage() {
       redirect: false,
     });
 
-    console.log("SIGNIN RESULT:", result);
-
     if (result?.error) {
       setError("Invalid Credentials");
       return;
     }
 
-    router.push("/admin/dashboard");
+    // Wait for session to be available
+    const session = await getSession();
+
+    if (!session) {
+      setError("Unable to fetch session.");
+      return;
+    }
+
+    // Ask backend where to redirect
+    const response = await fetch(
+      "/api/auth/redirect"
+    );
+
+    const data =
+      await response.json();
+
+    if (!data.success) {
+      setError(
+        "Unable to determine redirect."
+      );
+      return;
+    }
+
+    router.replace(data.redirectTo);
+
   } catch (error) {
-    console.error("LOGIN ERROR:", error);
-    setError("Something went wrong");
+    console.error(error);
+
+    setError("Something went wrong.");
+
   } finally {
     setLoading(false);
   }

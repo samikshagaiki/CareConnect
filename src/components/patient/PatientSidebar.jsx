@@ -15,6 +15,7 @@ import {
   Bot,
   User,
   LogOut,
+  MessageCircle,
 } from "lucide-react";
 
 const links = [
@@ -48,6 +49,11 @@ const links = [
     href: "/patient/appointments",
     icon: Calendar,
   },
+  {
+  name: "Support Chat",
+  href: "/patient/chat",
+  icon: MessageCircle,
+},
   {
     name: "Assessments",
     href: "/patient/assessments",

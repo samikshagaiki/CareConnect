@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 import {
   Calendar,
@@ -730,6 +731,44 @@ fetchAppointments();
               {appointment.reason}
             </p>
 
+            <div className="mt-6 flex gap-3">
+
+  <Link
+    href="/patient/chat"
+    className="
+    rounded-xl
+    bg-blue-600
+    px-5
+    py-2.5
+    font-medium
+    text-white
+    transition
+    hover:bg-blue-700
+  "
+  >
+    💬 Chat with Counselor
+  </Link>
+
+  <Link
+    href="/patient/profile"
+    className="
+    rounded-xl
+    border
+    border-slate-300
+    px-5
+    py-2.5
+    font-medium
+    text-slate-700
+    transition
+    hover:bg-slate-50
+  "
+  >
+    View Counselor
+  </Link>
+
+</div>
+
+
           </div>
 
         )
@@ -775,6 +814,27 @@ fetchAppointments();
             <p className="mt-4">
               {appointment.reason}
             </p>
+
+            <div className="mt-6 flex gap-3">
+
+  <Link
+    href="/patient/chat"
+    className="
+    rounded-xl
+    border
+    border-blue-300
+    px-5
+    py-2.5
+    font-medium
+    text-blue-600
+    transition
+    hover:bg-blue-50
+  "
+  >
+    Continue Conversation
+  </Link>
+
+</div>
 
           </div>
 
@@ -822,6 +882,27 @@ fetchAppointments();
             <p className="mt-4">
               {appointment.reason}
             </p>
+
+            <div className="mt-6">
+
+  <Link
+    href="/patient/appointments"
+    className="
+    inline-flex
+    rounded-xl
+    bg-red-500
+    px-5
+    py-2.5
+    font-medium
+    text-white
+    transition
+    hover:bg-red-600
+  "
+  >
+    Reschedule Session
+  </Link>
+
+</div>
 
           </div>
 

@@ -7,10 +7,10 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
-  ClipboardList,
   CalendarDays,
   User,
   LogOut,
+  MessageCircle,
 } from "lucide-react";
 
 const links = [
@@ -24,6 +24,11 @@ const links = [
     href: "/counselor/patients",
     icon: Users,
   },
+  {
+  name: "Patient Inbox",
+  href: "/counselor/chat",
+  icon: MessageCircle,
+},
   {
     name: "Appointments",
     href: "/counselor/appointments",

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
@@ -12,65 +13,57 @@ import Appointment from "@/models/Appointment";
 import AssessmentResponse from "@/models/AssessmentResponse";
 
 export default async function DashboardPage() {
-  const session =
-    await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
   await connectDB();
 
-  const profile =
-    await PatientProfile.findOne({
-      userId: session.user.id,
-    }).lean();
+  const profile = await PatientProfile.findOne({
+    userId: session.user.id,
+  }).lean();
 
-  const todaysThought =
-    await getTodaysThought();
+  const todaysThought = await getTodaysThought();
 
-  const completedAssessments =
-    await AssessmentResponse.countDocuments({
-      patientId: session.user.id,
-    });
+  const completedAssessments = await AssessmentResponse.countDocuments({
+    patientId: session.user.id,
+  });
 
-  const latestPhq9 =
-    await AssessmentResponse.findOne({
-      patientId: session.user.id,
-      score: { $gt: 0 },
+  const latestPhq9 = await AssessmentResponse.findOne({
+    patientId: session.user.id,
+    score: { $gt: 0 },
+  })
+    .sort({
+      submittedAt: -1,
     })
-      .sort({
-        submittedAt: -1,
-      })
-      .lean();
+    .lean();
 
-  const assignment =
-    await CounselorAssignment.findOne({
-      patientId: session.user.id,
-      status: "accepted",
-    }).lean();
+  const assignment = await CounselorAssignment.findOne({
+    patientId: session.user.id,
+    status: "accepted",
+  }).lean();
 
   let counselor = null;
 
   if (assignment) {
-    counselor =
-      await CounselorProfile.findOne({
-        userId: assignment.counselorId,
-      }).lean();
+    counselor = await CounselorProfile.findOne({
+      userId: assignment.counselorId,
+    }).lean();
   }
 
-  const upcomingAppointment =
-    await Appointment.findOne({
-      patientId: session.user.id,
-      status: "accepted",
+  const upcomingAppointment = await Appointment.findOne({
+    patientId: session.user.id,
+    status: "accepted",
+  })
+    .sort({
+      appointmentDate: 1,
     })
-      .sort({
-        appointmentDate: 1,
-      })
-      .lean();
+    .lean();
 
   const avatar =
     profile?.gender === "female"
       ? "/female-wellness.png"
       : profile?.gender === "male"
-      ? "/male-wellness.png"
-      : "/default-wellness.png";
+        ? "/male-wellness.png"
+        : "/default-wellness.png";
 
   const cardStyle =
     "rounded-[32px] bg-white border border-white shadow-lg p-6 hover:shadow-xl transition-all";
@@ -89,19 +82,18 @@ export default async function DashboardPage() {
         to-[#c1a4fa]
         p-10
         shadow-xl
+        height-[800px]
       "
       >
         <div className="max-w-xl">
           <h1 className="text-5xl font-bold text-white">
-            Welcome Back,
-            {" "}
-            {profile?.anonymousName}
+            Welcome Back, {profile?.anonymousName}
             🌸
           </h1>
 
           <p className="mt-4 text-lg text-white/90">
-            Continue your wellness journey and celebrate
-            every small step forward.
+            Continue your wellness journey and celebrate every small step
+            forward.
           </p>
 
           <div className="mt-8 flex gap-12">
@@ -110,9 +102,7 @@ export default async function DashboardPage() {
                 {completedAssessments}
               </h3>
 
-              <p className="text-white/80">
-                Assessments
-              </p>
+              <p className="text-white/80">Assessments</p>
             </div>
 
             <div>
@@ -120,9 +110,7 @@ export default async function DashboardPage() {
                 {latestPhq9?.score ?? 0}
               </h3>
 
-              <p className="text-white/80">
-                PHQ-9 Score
-              </p>
+              <p className="text-white/80">PHQ-9 Score</p>
             </div>
 
             <div>
@@ -130,9 +118,7 @@ export default async function DashboardPage() {
                 {upcomingAppointment ? "1" : "0"}
               </h3>
 
-              <p className="text-white/80">
-                Appointments
-              </p>
+              <p className="text-white/80">Appointments</p>
             </div>
           </div>
         </div>
@@ -142,7 +128,7 @@ export default async function DashboardPage() {
             src={avatar}
             alt="Wellness Avatar"
             width={260}
-            height={200}
+            height={260}
             className="drop-shadow-xl"
           />
         </div>
@@ -156,9 +142,7 @@ export default async function DashboardPage() {
             ✨ Today's Positive Thought
           </h3>
 
-          <p className="mt-4 text-slate-600">
-            {todaysThought}
-          </p>
+          <p className="mt-4 text-slate-600">{todaysThought}</p>
         </div>
 
         <div className={cardStyle}>
@@ -166,19 +150,13 @@ export default async function DashboardPage() {
             😊 Mood Check-In
           </h3>
 
-          <p className="mt-4 text-slate-600">
-            How are you feeling today?
-          </p>
+          <p className="mt-4 text-slate-600">How are you feeling today?</p>
 
-          <div className="mt-5 flex gap-3 text-3xl">
-            😊 😄 😐 😔 😢
-          </div>
+          <div className="mt-5 flex gap-3 text-3xl">😊 😄 😐 😔 😢</div>
         </div>
 
         <div className={cardStyle}>
-          <h3 className="font-semibold text-lg text-purple-500">
-            📖 Journal
-          </h3>
+          <h3 className="font-semibold text-lg text-purple-500">📖 Journal</h3>
 
           <p className="mt-4 text-slate-600">
             Capture today&apos;s thoughts and reflections.
@@ -186,13 +164,10 @@ export default async function DashboardPage() {
         </div>
 
         <div className={cardStyle}>
-          <h3 className="font-semibold text-lg text-sky-500">
-            👥 Community
-          </h3>
+          <h3 className="font-semibold text-lg text-sky-500">👥 Community</h3>
 
           <p className="mt-4 text-slate-600">
-            Connect with people who understand your
-            journey.
+            Connect with people who understand your journey.
           </p>
         </div>
 
@@ -214,14 +189,10 @@ export default async function DashboardPage() {
 
           {counselor ? (
             <div className="mt-4">
-              <h4 className="font-semibold text-xl">
-                {counselor.fullName}
-              </h4>
+              <h4 className="font-semibold text-xl">{counselor.fullName}</h4>
 
               <p className="mt-2 text-slate-500">
-                {counselor.experience}
-                {" "}
-                Years Experience
+                {counselor.experience} Years Experience
               </p>
 
               <p className="mt-3 text-sm text-slate-500">
@@ -231,11 +202,25 @@ export default async function DashboardPage() {
               <p className="mt-3 text-sm text-slate-500">
                 {counselor.languages?.join(", ")}
               </p>
+
+              <Link
+  href={`/patient/chat?counselor=${counselor.userId}`}
+  className="
+    mt-6
+    inline-flex
+    rounded-2xl
+    bg-purple-500
+    px-6
+    py-3
+    font-medium
+    text-white
+  "
+>
+  💬 Chat with Counselor
+</Link>
             </div>
           ) : (
-            <p className="mt-4 text-slate-500">
-              No counselor assigned yet.
-            </p>
+            <p className="mt-4 text-slate-500">No counselor assigned yet.</p>
           )}
         </div>
 
@@ -258,9 +243,7 @@ export default async function DashboardPage() {
           {upcomingAppointment ? (
             <div className="mt-4">
               <p className="font-semibold">
-                {new Date(
-                  upcomingAppointment.appointmentDate
-                ).toLocaleString()}
+                {new Date(upcomingAppointment.appointmentDate).toLocaleString()}
               </p>
 
               <p className="mt-3 text-slate-500">
@@ -268,9 +251,7 @@ export default async function DashboardPage() {
               </p>
             </div>
           ) : (
-            <p className="mt-4 text-slate-500">
-              No appointments scheduled.
-            </p>
+            <p className="mt-4 text-slate-500">No appointments scheduled.</p>
           )}
         </div>
       </div>
@@ -289,13 +270,9 @@ export default async function DashboardPage() {
           shadow-lg
         "
         >
-          <p className="font-medium">
-            Assessments Completed
-          </p>
+          <p className="font-medium">Assessments Completed</p>
 
-          <h3 className="mt-4 text-5xl font-bold">
-            {completedAssessments}
-          </h3>
+          <h3 className="mt-4 text-5xl font-bold">{completedAssessments}</h3>
         </div>
 
         <div
@@ -309,13 +286,9 @@ export default async function DashboardPage() {
           shadow-lg
         "
         >
-          <p className="font-medium">
-            Latest PHQ-9 Score
-          </p>
+          <p className="font-medium">Latest PHQ-9 Score</p>
 
-          <h3 className="mt-4 text-5xl font-bold">
-            {latestPhq9?.score ?? 0}
-          </h3>
+          <h3 className="mt-4 text-5xl font-bold">{latestPhq9?.score ?? 0}</h3>
 
           <p className="mt-2 text-white/90">
             {latestPhq9?.severity ?? "No Data"}
@@ -333,9 +306,7 @@ export default async function DashboardPage() {
           shadow-lg
         "
         >
-          <p className="font-medium">
-            Upcoming Appointments
-          </p>
+          <p className="font-medium">Upcoming Appointments</p>
 
           <h3 className="mt-4 text-5xl font-bold">
             {upcomingAppointment ? "1" : "0"}

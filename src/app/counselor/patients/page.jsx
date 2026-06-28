@@ -224,9 +224,10 @@ text-slate-700
 
   </div>
 
-  {/* Actions */}
 
- <div className="mt-6">
+ {/* Actions */}
+
+<div className="mt-6 space-y-3">
 
   <div className="grid grid-cols-2 gap-3">
 
@@ -265,7 +266,6 @@ text-slate-700
   <Link
     href={`/counselor/assessments/create?patient=${patient.userId}`}
     className="
-    mt-3
     block
     rounded-xl
     bg-slate-900
@@ -277,6 +277,22 @@ text-slate-700
   "
   >
     Assign Assessment
+  </Link>
+
+  <Link
+    href="/counselor/chat"
+    className="
+    block
+    rounded-xl
+    bg-blue-600
+    py-3
+    text-center
+    font-medium
+    text-white
+    hover:bg-blue-700
+  "
+  >
+    💬 Message Patient
   </Link>
 
 </div>
@@ -293,3 +309,4 @@ text-slate-700
     </div>
   );
 }
+

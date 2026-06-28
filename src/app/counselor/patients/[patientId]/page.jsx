@@ -248,6 +248,27 @@ export default function PatientProfilePage() {
           Assign Assessment
         </Link>
 
+          <Link
+href="/counselor/chat"
+className="
+mt-3
+block
+rounded-xl
+border
+border-blue-300
+py-3
+text-center
+font-medium
+text-blue-600
+transition
+hover:bg-blue-50
+"
+>
+
+💬 Message Patient
+
+</Link>
+
         <Link
           href={`/counselor/patients/${patient.userId}/responses`}
           className="

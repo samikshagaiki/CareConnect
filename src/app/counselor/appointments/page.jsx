@@ -58,53 +58,6 @@ const missedAppointments =
     }
   }
 
-  async function fetchUpcomingAppointments() {
-  const response =
-    await fetch(
-      "/api/counselor/upcoming-appointments"
-    );
-
-  const data =
-    await response.json();
-
-  if (data.success) {
-    setUpcomingAppointments(
-      data.appointments
-    );
-  }
-}
-
-async function fetchCompletedAppointments() {
-  const response =
-    await fetch(
-      "/api/counselor/completed-appointments"
-    );
-
-  const data =
-    await response.json();
-
-  if (data.success) {
-    setCompletedAppointments(
-      data.appointments
-    );
-  }
-}
-
-async function fetchMissedAppointments() {
-  const response =
-    await fetch(
-      "/api/counselor/missed-appointments"
-    );
-
-  const data =
-    await response.json();
-
-  if (data.success) {
-    setMissedAppointments(
-      data.appointments
-    );
-  }
-}
 
   async function accept(id) {
     await fetch(
@@ -128,9 +81,8 @@ async function fetchMissedAppointments() {
     fetchAppointments();
   }
 
-  async function completeAppointment(
-  id
-) {
+async function completeAppointment(id) {
+
   await fetch(
     `/api/counselor/appointments/${id}/complete`,
     {
@@ -139,19 +91,13 @@ async function fetchMissedAppointments() {
   );
 
   fetchAppointments();
-  fetchUpcomingAppointments();
-  fetchCompletedAppointments();
-  fetchMissedAppointments();
+
 }
 
-  useEffect(() => {
+ useEffect(() => {
+
   fetchAppointments();
 
-  fetchUpcomingAppointments();
-
-  fetchCompletedAppointments();
-
-  fetchMissedAppointments();
 }, []);
 
   return (
@@ -515,8 +461,8 @@ async function fetchMissedAppointments() {
                 <span
                   className="
                    rounded-full
-                  bg-red-100
-                  px-3
+        
+                  px-2
                   py-1
                   text-sm
                   font-medium

@@ -168,7 +168,7 @@ return (
       </p>
 
       <h2 className="mt-3 text-4xl font-bold text-slate-800">
-        Welcome Back 👋
+        Welcome Back
       </h2>
 
       <p className="mt-4 max-w-3xl text-slate-500">
@@ -183,8 +183,8 @@ return (
       className="
       hidden
       lg:flex
-      h-20
-      w-20
+      h-50
+      w-50
       items-center
       justify-center
       rounded-full
@@ -202,6 +202,134 @@ return (
     {/* ANALYTICS */}
 
     <CounselorAnalytics />
+
+    {/* QUICK ACTIONS */}
+
+<section>
+
+<div className="flex items-center justify-between">
+
+<div>
+
+<h2 className="text-2xl font-bold">
+Quick Actions
+</h2>
+
+<p className="mt-1 text-slate-500">
+Frequently used counselor tools.
+</p>
+
+</div>
+
+</div>
+
+<div className="mt-6 grid gap-6 md:grid-cols-3">
+
+<Link
+href="/counselor/chat"
+className="
+rounded-[28px]
+border
+border-blue-100
+bg-gradient-to-br
+from-blue-50
+to-sky-100
+p-6
+transition
+hover:-translate-y-1
+hover:shadow-xl
+"
+>
+
+<div className="text-4xl">
+💬
+</div>
+
+<h3 className="mt-6 text-xl font-bold">
+Patient Inbox
+</h3>
+
+<p className="mt-3 text-slate-600">
+Continue secure conversations with your patients.
+</p>
+
+<div className="mt-6 font-semibold text-blue-600">
+Open Inbox →
+</div>
+
+</Link>
+
+<Link
+href="/counselor/patients"
+className="
+rounded-[28px]
+border
+border-green-100
+bg-gradient-to-br
+from-green-50
+to-emerald-50
+p-6
+transition
+hover:-translate-y-1
+hover:shadow-xl
+"
+>
+
+<div className="text-4xl">
+👥
+</div>
+
+<h3 className="mt-6 text-xl font-bold">
+Patients
+</h3>
+
+<p className="mt-3 text-slate-600">
+Manage assigned patients and monitor progress.
+</p>
+
+<div className="mt-6 font-semibold text-green-600">
+View Patients →
+</div>
+
+</Link>
+
+<Link
+href="/counselor/assessments/create"
+className="
+rounded-[28px]
+border
+border-purple-100
+bg-gradient-to-br
+from-purple-50
+to-pink-50
+p-6
+transition
+hover:-translate-y-1
+hover:shadow-xl
+"
+>
+
+<div className="text-4xl">
+📝
+</div>
+
+<h3 className="mt-6 text-xl font-bold">
+New Assessment
+</h3>
+
+<p className="mt-3 text-slate-600">
+Create and assign assessments to patients.
+</p>
+
+<div className="mt-6 font-semibold text-purple-600">
+Create →
+</div>
+
+</Link>
+
+</div>
+
+</section>
 
 
     {/* REQUESTS */}
@@ -451,6 +579,42 @@ return (
                   <p className="text-slate-600">
                     {appointment.reason}
                   </p>
+
+                  <div className="mt-6 flex gap-3">
+
+<Link
+href="/counselor/chat"
+className="
+rounded-xl
+bg-blue-600
+px-5
+py-2.5
+text-white
+hover:bg-blue-700
+"
+>
+
+💬 Open Chat
+
+</Link>
+
+<Link
+href={`/counselor/patients/${appointment.patient.userId}`}
+className="
+rounded-xl
+border
+border-slate-300
+px-5
+py-2.5
+hover:bg-slate-50
+"
+>
+
+View Patient
+
+</Link>
+
+</div>
 
                 </div>
 
