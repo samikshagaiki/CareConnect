@@ -65,38 +65,58 @@ export default async function DashboardPage() {
         ? "/male-wellness.png"
         : "/default-wellness.png";
 
-  const cardStyle =
-    "rounded-[32px] bg-white border border-white shadow-lg p-6 hover:shadow-xl transition-all";
+  const cardStyle = `
+  rounded-[28px]
+  bg-white
+  border
+  border-white
+  shadow-lg
+  p-5
+  md:p-6
+  hover:shadow-xl
+  transition-all
+`;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 lg:space-y-8">
       {/* HERO */}
 
       <section
         className="
-        relative
-        overflow-hidden
-        rounded-[40px]
-        bg-linear-to-r
-        from-[#5aacfe]
-        to-[#c1a4fa]
-        p-10
-        shadow-xl
-        height-[800px]
-      "
+    relative
+    overflow-hidden
+    rounded-4xl
+    bg-linear-to-r
+    from-[#5aacfe]
+    to-[#c1a4fa]
+    px-6
+    py-8
+    md:px-10
+    md:py-10
+    shadow-xl
+    min-h-65
+  "
       >
-        <div className="max-w-xl">
-          <h1 className="text-5xl font-bold text-white">
+        <div className="max-w-2xl">
+          <h1 className="text-3xl md:text-5xl font-bold text-white">
             Welcome Back, {profile?.anonymousName}
             🌸
           </h1>
 
-          <p className="mt-4 text-lg text-white/90">
+          <p className="mt-4 text-base md:text-lg text-white/90">
             Continue your wellness journey and celebrate every small step
             forward.
           </p>
 
-          <div className="mt-8 flex gap-12">
+          <div
+            className="
+mt-8
+grid
+grid-cols-3
+gap-6
+max-w-lg
+"
+          >
             <div>
               <h3 className="text-3xl font-bold text-white">
                 {completedAssessments}
@@ -123,23 +143,60 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="absolute right-8 bottom-0 hidden xl:block">
-          <Image
-            src={avatar}
-            alt="Wellness Avatar"
-            width={260}
-            height={260}
-            className="drop-shadow-xl"
-          />
-        </div>
+      <div
+  className="
+    absolute
+    right-12
+    top-1/2
+    hidden
+    xl:flex
+    -translate-y-1/2
+    items-center
+    justify-center
+  "
+>
+  <div
+    className="
+      flex
+      h-72
+      w-72
+      items-center
+      justify-center
+      rounded-full
+      bg-white/15
+      backdrop-blur-md
+    "
+  >
+    <Image
+      src={avatar}
+      alt="Wellness Avatar"
+      width={300}
+      height={300}
+      className="
+        h-auto
+        w-[260px]
+        object-contain
+        drop-shadow-2xl
+      "
+    />
+  </div>
+</div>
       </section>
 
       {/* MAIN CARDS */}
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div
+        className="
+    grid
+    grid-cols-1
+    md:grid-cols-2
+    xl:grid-cols-3
+    gap-6
+  "
+      >
         <div className={cardStyle}>
           <h3 className="font-semibold text-lg text-purple-500">
-            ✨ Today's Positive Thought
+            ✨ Today&apos;s Positive Thought
           </h3>
 
           <p className="mt-4 text-slate-600">{todaysThought}</p>
@@ -152,7 +209,16 @@ export default async function DashboardPage() {
 
           <p className="mt-4 text-slate-600">How are you feeling today?</p>
 
-          <div className="mt-5 flex gap-3 text-3xl">😊 😄 😐 😔 😢</div>
+          <div
+className="
+mt-5
+flex
+flex-wrap
+gap-3
+text-2xl
+md:text-3xl
+"
+>😊 😄 😐 😔 😢</div>
         </div>
 
         <div className={cardStyle}>
@@ -173,15 +239,16 @@ export default async function DashboardPage() {
 
         <div
           className="
-          rounded-4xl
-          bg-linear-to-br
-          from-white
-          to-[#F8F3FF]
-          border
-          border-purple-100
-          shadow-lg
-          p-6
-        "
+rounded-[28px]
+bg-linear-to-br
+from-white
+to-[#F8F3FF]
+border
+border-purple-100
+shadow-lg
+p-5
+md:p-6
+"
         >
           <h3 className="font-semibold text-lg text-purple-500">
             💜 Assigned Counselor
@@ -189,7 +256,9 @@ export default async function DashboardPage() {
 
           {counselor ? (
             <div className="mt-4">
-              <h4 className="font-semibold text-xl">{counselor.fullName}</h4>
+              <h4 className="text-lg md:text-xl font-semibold">
+                {counselor.fullName}
+              </h4>
 
               <p className="mt-2 text-slate-500">
                 {counselor.experience} Years Experience
@@ -204,20 +273,25 @@ export default async function DashboardPage() {
               </p>
 
               <Link
-  href={`/patient/chat?counselor=${counselor.userId}`}
-  className="
-    mt-6
-    inline-flex
-    rounded-2xl
-    bg-purple-500
-    px-6
-    py-3
-    font-medium
-    text-white
+                href={`/patient/chat?counselor=${counselor.userId}`}
+                className="
+mt-6
+inline-flex
+justify-center
+w-full
+sm:w-auto
+rounded-2xl
+bg-purple-500
+px-6
+py-3
+font-medium
+text-white
+hover:bg-purple-600
+transition
   "
->
-  💬 Chat with Counselor
-</Link>
+              >
+                💬 Chat with Counselor
+              </Link>
             </div>
           ) : (
             <p className="mt-4 text-slate-500">No counselor assigned yet.</p>
@@ -226,17 +300,18 @@ export default async function DashboardPage() {
 
         <div
           className="
-          rounded-4xl
-          bg-linear-to-br
-          from-white
-          to-[#EEF8FF]
-          border
-          border-sky-100
-          shadow-lg
-          p-6
-        "
+rounded-[28px]
+bg-linear-to-br
+from-white
+to-[#EEF8FF]
+border
+border-sky-100
+shadow-lg
+p-5
+md:p-6
+"
         >
-          <h3 className="font-semibold text-lg text-sky-500">
+          <h3 className="text-lg md:text-xl font-semibold text-sky-500">
             📅 Upcoming Appointment
           </h3>
 
@@ -258,21 +333,33 @@ export default async function DashboardPage() {
 
       {/* STATS */}
 
-      <div className="grid md:grid-cols-3 gap-6">
+      <div
+        className="
+grid
+grid-cols-1
+sm:grid-cols-2
+xl:grid-cols-3
+gap-6
+"
+      >
         <div
           className="
-          rounded-4xl
-          bg-linear-to-r
-          from-[#8EC5FC]
-          to-[#A7D7FF]
-          p-8
-          text-white
-          shadow-lg
-        "
+rounded-[28px]
+bg-linear-to-br
+from-white
+to-[#EEF8FF]
+border
+border-sky-100
+shadow-lg
+p-5
+md:p-6
+"
         >
           <p className="font-medium">Assessments Completed</p>
 
-          <h3 className="mt-4 text-5xl font-bold">{completedAssessments}</h3>
+          <h3 className="mt-4 text-4xl md:text-5xl font-bold">
+            {completedAssessments}
+          </h3>
         </div>
 
         <div
@@ -281,14 +368,17 @@ export default async function DashboardPage() {
           bg-linear-to-r
           from-[#B388FF]
           to-[#DCCCFD]
-          p-8
+          p-6
+          md:p-8
           text-white
           shadow-lg
         "
         >
           <p className="font-medium">Latest PHQ-9 Score</p>
 
-          <h3 className="mt-4 text-5xl font-bold">{latestPhq9?.score ?? 0}</h3>
+          <h3 className="mt-4 text-4xl md:text-5xl font-bold">
+            {latestPhq9?.score ?? 0}
+          </h3>
 
           <p className="mt-2 text-white/90">
             {latestPhq9?.severity ?? "No Data"}
@@ -297,18 +387,20 @@ export default async function DashboardPage() {
 
         <div
           className="
-          rounded-4xl
-          bg-linear-to-r
-          from-[#8EC5FC]
-          to-[#DCCCFD]
-          p-8
-          text-white
-          shadow-lg
-        "
+rounded-[28px]
+bg-linear-to-br
+from-white
+to-[#EEF8FF]
+border
+border-sky-100
+shadow-lg
+p-5
+md:p-6
+"
         >
           <p className="font-medium">Upcoming Appointments</p>
 
-          <h3 className="mt-4 text-5xl font-bold">
+          <h3 className="mt-4 text-4xl md:text-5xl font-bold">
             {upcomingAppointment ? "1" : "0"}
           </h3>
         </div>

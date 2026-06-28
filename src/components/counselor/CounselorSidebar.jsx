@@ -41,23 +41,24 @@ const links = [
   },
 ];
 
-export default function CounselorSidebar() {
+export default function CounselorSidebar({
+  mobile = false,
+})  {
   const pathname =
     usePathname();
 
   return (
     <aside
-      className="
-      w-72
-      bg-white
-      border-r
-      border-slate-200
-      shadow-sm
-      flex
-      flex-col
-      p-6
-    "
-    >
+  className={`
+    bg-white
+    h-full
+    ${
+      mobile
+        ? "w-72 p-6"
+        : "w-80 border-r shadow-sm p-6"
+    }
+  `}
+>
       <div className="mb-10">
         <h2 className="text-2xl font-bold">
           Connect Care
@@ -83,8 +84,13 @@ export default function CounselorSidebar() {
               href={link.href}
               className={`
                 flex
-                items-center
-                gap-3
+items-center
+justify-center
+lg:justify-start
+gap-3
+whitespace-nowrap
+min-w-fit
+lg:min-w-0
                 rounded-xl
                 px-4
                 py-3
@@ -104,7 +110,8 @@ export default function CounselorSidebar() {
             >
               <Icon size={18} />
 
-              {link.name}
+              
+{link.name}
             </Link>
           );
         })}
@@ -119,8 +126,13 @@ export default function CounselorSidebar() {
         className="
         mt-6
         flex
-        items-center
-        gap-3
+items-center
+justify-center
+lg:justify-start
+gap-3
+whitespace-nowrap
+min-w-fit
+lg:min-w-0
         rounded-xl
         px-4
         py-3
@@ -129,7 +141,9 @@ export default function CounselorSidebar() {
       "
       >
         <LogOut size={18} />
-        Logout
+        
+Logout
+
       </button>
     </aside>
   );

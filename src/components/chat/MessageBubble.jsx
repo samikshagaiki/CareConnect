@@ -32,7 +32,7 @@ export default function MessageBubble({
 
           ownMessage
 
-            ? "bg-blue-600 text-white rounded-br-md"
+            ? "bg-blue-500 text-white rounded-br-md"
 
             : "bg-white border border-slate-200 text-slate-700 rounded-bl-md"
 

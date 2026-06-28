@@ -127,14 +127,23 @@ async function fetchUpcomingAppointments() {
 }, []);
 
 return (
- <div className="space-y-8">
+ <div className="space-y-6 lg:space-y-8">
 
     {/* HEADER */}
 
-    <div className="flex items-center justify-between">
+    <div
+  className="
+    flex
+    flex-col
+    gap-4
+    lg:flex-row
+    lg:items-center
+    lg:justify-between
+  "
+>
 
       <div>
-        <h1 className="text-4xl font-bold text-slate-800">
+        <h1 className="text-3xl md:text-4xl font-bold text-slate-800">
           Counselor Dashboard
         </h1>
 
@@ -149,17 +158,26 @@ return (
     {/* WELCOME CARD */}
 
     <div
-  className="
-  rounded-[32px]
-  border
-  border-slate-200
-  bg-white
-  p-10
-  shadow-sm
+className="
+rounded-[28px]
+border
+border-slate-200
+bg-white
+p-5 md:p-6
+shadow-sm
 "
 >
 
-  <div className="flex items-center justify-between">
+  <div
+className="
+flex
+flex-col
+gap-8
+lg:flex-row
+lg:items-center
+lg:justify-between
+"
+>
 
     <div>
 
@@ -167,7 +185,7 @@ return (
         Counselor Workspace
       </p>
 
-      <h2 className="mt-3 text-4xl font-bold text-slate-800">
+      <h2 className="mt-3 text-3xl md:text-4xl font-bold text-slate-800">
         Welcome Back
       </h2>
 
@@ -180,18 +198,19 @@ return (
     </div>
 
     <div
-      className="
-      hidden
-      lg:flex
-      h-50
-      w-50
-      items-center
-      justify-center
-      rounded-full
-      bg-blue-50
-      text-3xl
-    "
-    >
+className="
+flex
+mx-auto
+lg:mx-0
+h-20
+w-20
+items-center
+justify-center
+rounded-full
+bg-blue-50
+text-3xl md:text-4xl
+"
+>
       🩺
     </div>
 
@@ -223,7 +242,16 @@ Frequently used counselor tools.
 
 </div>
 
-<div className="mt-6 grid gap-6 md:grid-cols-3">
+<div
+className="
+mt-6
+grid
+grid-cols-1
+md:grid-cols-2
+xl:grid-cols-3
+gap-6
+"
+>
 
 <Link
 href="/counselor/chat"
@@ -234,18 +262,18 @@ border-blue-100
 bg-gradient-to-br
 from-blue-50
 to-sky-100
-p-6
+p-5 md:p-6
 transition
 hover:-translate-y-1
 hover:shadow-xl
 "
 >
 
-<div className="text-4xl">
+<div className="text-3xl md:text-4xl">
 💬
 </div>
 
-<h3 className="mt-6 text-xl font-bold">
+<h3 className="mt-6 text-lg md:text-xl font-bold">
 Patient Inbox
 </h3>
 
@@ -268,18 +296,18 @@ border-green-100
 bg-gradient-to-br
 from-green-50
 to-emerald-50
-p-6
+p-5 md:p-6
 transition
 hover:-translate-y-1
 hover:shadow-xl
 "
 >
 
-<div className="text-4xl">
+<div className="text-3xl md:text-4xl">
 👥
 </div>
 
-<h3 className="mt-6 text-xl font-bold">
+<h3 className="mt-6 text-lg md:text-xl font-bold">
 Patients
 </h3>
 
@@ -302,18 +330,18 @@ border-purple-100
 bg-gradient-to-br
 from-purple-50
 to-pink-50
-p-6
+p-5 md:p-6
 transition
 hover:-translate-y-1
 hover:shadow-xl
 "
 >
 
-<div className="text-4xl">
+<div className="text-3xl md:text-4xl">
 📝
 </div>
 
-<h3 className="mt-6 text-xl font-bold">
+<h3 className="mt-6 text-lg md:text-xl font-bold">
 New Assessment
 </h3>
 
@@ -382,7 +410,14 @@ Create →
 
       ) : (
 
-        <div className="grid gap-6 md:grid-cols-2">
+       <div
+className="
+grid
+grid-cols-1
+xl:grid-cols-2
+gap-6
+"
+>
 
           {requests.map((request) => (
 
@@ -393,7 +428,7 @@ Create →
               border
               border-slate-200
               bg-white
-              p-6
+              p-5 md:p-6
               shadow-sm
             "
             >
@@ -401,7 +436,7 @@ Create →
               <div className="flex justify-between">
 
                 <div>
-                  <h3 className="text-xl font-semibold">
+                  <h3 className="text-lg md:text-xl font-semibold">
                     {request.patient?.anonymousName}
                   </h3>
 
@@ -432,7 +467,15 @@ Create →
                 {request.patient?.preferredLanguage}
               </p>
 
-              <div className="mt-6 flex gap-3">
+              <div
+className="
+mt-6
+flex
+flex-col
+sm:flex-row
+gap-3
+"
+>
 
                 <button
                   onClick={() =>
@@ -441,7 +484,9 @@ Create →
                     )
                   }
                   className="
-                  rounded-xl
+                  w-full
+rounded-xl
+sm:w-auto
                   bg-blue-600
                   px-5
                   py-2.5
@@ -459,7 +504,9 @@ Create →
                     )
                   }
                   className="
-                  rounded-xl
+                  w-full
+rounded-xl
+sm:w-auto
                   border
                   border-slate-300
                   px-5
@@ -534,7 +581,14 @@ Create →
 
       ) : (
 
-        <div className="grid gap-6 md:grid-cols-2">
+        <div
+className="
+grid
+grid-cols-1
+xl:grid-cols-2
+gap-6
+"
+>
 
           {upcomingAppointments.map(
             (appointment) => (
@@ -546,7 +600,7 @@ Create →
                 border
                 border-slate-200
                 bg-white
-                p-6
+                p-5 md:p-6
                 shadow-sm
               "
               >
@@ -554,7 +608,7 @@ Create →
                 <div className="flex justify-between">
 
                   <div>
-                    <h3 className="text-xl font-semibold">
+                    <h3 className="text-lg md:text-xl font-semibold">
                       {
                         appointment.patient
                           ?.anonymousName
@@ -580,12 +634,23 @@ Create →
                     {appointment.reason}
                   </p>
 
-                  <div className="mt-6 flex gap-3">
+                  <div
+className="
+mt-6
+flex
+flex-col
+sm:flex-row
+gap-3
+"
+>
 
 <Link
 href="/counselor/chat"
 className="
+w-full
 rounded-xl
+text-center
+sm:w-auto
 bg-blue-600
 px-5
 py-2.5
@@ -601,7 +666,10 @@ hover:bg-blue-700
 <Link
 href={`/counselor/patients/${appointment.patient.userId}`}
 className="
+w-full
 rounded-xl
+text-center
+sm:w-auto
 border
 border-slate-300
 px-5

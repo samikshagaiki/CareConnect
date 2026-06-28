@@ -1,6 +1,16 @@
 "use client";
 
-import { Phone, Video, MoreVertical } from "lucide-react";
+import {
+
+Phone,
+
+Video,
+
+MoreVertical,
+
+ArrowLeft,
+
+} from "lucide-react";
 
 export default function ChatHeader({
   conversation,
@@ -8,6 +18,9 @@ export default function ChatHeader({
   typing,
   connected,
   userId,
+  role,
+  showBackButton,
+  onBack,
 }) {
   const person =
     conversation.patient?.userId?.toString() === userId?.toString()
@@ -30,6 +43,28 @@ export default function ChatHeader({
     "
     >
       <div className="flex items-center gap-4">
+
+{showBackButton && (
+
+<button
+
+onClick={onBack}
+
+className="
+mr-1
+rounded-xl
+p-2
+hover:bg-slate-100
+md:hidden
+"
+
+>
+
+<ArrowLeft size={20}/>
+
+</button>
+
+)}
         <div
           className="
           flex
@@ -124,7 +159,7 @@ export default function ChatHeader({
         </div>
       </div>
 
-      <div className="flex gap-3">
+      {/* <div className="flex gap-3">
         <button
           className="
           rounded-xl
@@ -154,7 +189,7 @@ export default function ChatHeader({
         >
           <MoreVertical size={18} />
         </button>
-      </div>
+      </div> */}
     </div>
   );
 }

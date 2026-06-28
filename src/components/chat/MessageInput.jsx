@@ -146,70 +146,57 @@ if (!receiverId) {
 
   //-----------------------------------------
 
-  return (
-
-    <div
-      className="
+ return (
+  <div
+    className="
       border-t
       border-slate-200
       bg-white
-      p-5
+      p-3
+      sm:p-4
+      md:p-5
+      shrink-0
     "
-    >
-
-      <div className="flex items-end gap-4">
-
-        <textarea
-
-          rows={1}
-
-          value={message}
-
-          onChange={(e)=>
-            handleTyping(
-              e.target.value
-            )
-          }
-
-          onKeyDown={
-            handleKeyDown
-          }
-
-          placeholder="Type your message..."
-
-          className="
-          max-h-40
-          min-h-[52px]
+  >
+    <div className="flex items-end gap-2 sm:gap-3">
+      <textarea
+        rows={1}
+        value={message}
+        onChange={(e) =>
+          handleTyping(
+            e.target.value
+          )
+        }
+        onKeyDown={handleKeyDown}
+        placeholder="Type your message..."
+        className="
           flex-1
+          min-h-[48px]
+          max-h-40
           resize-none
           rounded-2xl
           border
           border-slate-200
           bg-slate-50
-          px-5
+          px-4
           py-3
+          text-sm
+          sm:text-base
           outline-none
           transition
           focus:border-blue-400
           focus:bg-white
         "
+      />
 
-        />
-
-        <button
-
-          onClick={
-            sendMessage
-          }
-
-          disabled={
-            !message.trim()
-          }
-
-          className="
+      <button
+        onClick={sendMessage}
+        disabled={!message.trim()}
+        className="
           flex
           h-12
           w-12
+          shrink-0
           items-center
           justify-center
           rounded-2xl
@@ -220,17 +207,11 @@ if (!receiverId) {
           disabled:cursor-not-allowed
           disabled:opacity-40
         "
-
-        >
-
-          <Send size={18}/>
-
-        </button>
-
-      </div>
-
+      >
+        <Send size={18} />
+      </button>
     </div>
-
-  );
+  </div>
+);
 
 }

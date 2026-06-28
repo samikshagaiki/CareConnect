@@ -16,6 +16,8 @@ import MessageInput from "./MessageInput";
 import EmptyState from "./EmptyState";
 
 export default function ChatLayout({ role, userId }) {
+  const [showSidebar, setShowSidebar] = useState(role === "counselor");
+
   const [conversations, setConversations] = useState([]);
 
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -140,6 +142,14 @@ const patientId =
   }));
 
   loadMessages(conversation._id);
+
+   if (
+    window.innerWidth < 768
+  ) {
+
+    setShowSidebar(false);
+
+  }
 
 }
 
@@ -345,6 +355,11 @@ socket.on("stop-typing", ({ senderId }) => {
   userId,
 ]);
 
+function openSidebar() {
+
+  setShowSidebar(true);
+
+}
 
   //---------------------------------------
 
@@ -356,61 +371,165 @@ socket.on("stop-typing", ({ senderId }) => {
 ]);
   //---------------------------------------
 
-  return (
-    <div
-      className="
-      h-[calc(100vh-110px)]
-      overflow-hidden
-      rounded-4xl
-      border
-      border-slate-200
-      bg-white
-      shadow-sm
-      grid
-      grid-cols-12
-    "
-    >
-      <ChatSidebar
-  role={role}
-  conversations={conversations}
-  selectedConversation={selectedConversation}
-  onSelect={selectConversation}
-  unreadCounts={unreadCounts}
-  search={search}
-  setSearch={setSearch}
-  onlineUsers={onlineUsers}
+return (
+
+<div
+className="
+flex
+h-[calc(100vh-90px)]
+overflow-hidden
+rounded-3xl
+border
+border-slate-200
+bg-white
+shadow-sm
+"
+>
+
+{/* Sidebar */}
+
+<div
+className={`
+border-r
+border-slate-200
+bg-white
+
+${
+role==="patient"
+
+? "hidden md:block w-[320px]"
+
+: showSidebar
+
+? "block w-full md:w-[320px]"
+
+: "hidden md:block md:w-[320px]"
+}
+`}
+>
+
+<ChatSidebar
+
+role={role}
+
+conversations={conversations}
+
+selectedConversation={selectedConversation}
+
+onSelect={selectConversation}
+
+unreadCounts={unreadCounts}
+
+search={search}
+
+setSearch={setSearch}
+
+onlineUsers={onlineUsers}
+
 />
 
-      <div
-        className="
-        col-span-8
-        flex
-        flex-col
-      "
-      >
-        {selectedConversation ? (
-          <>
-            <ChatHeader
-  conversation={selectedConversation}
-  onlineUsers={onlineUsers}
-  typing={typing}
-  connected={connected}
-  userId={userId}
+</div>
+
+{/* Chat */}
+
+<div
+className={`
+flex
+flex-1
+flex-col
+min-w-0
+
+${
+role==="counselor"
+
+&&
+
+showSidebar
+
+? "hidden md:flex"
+
+: "flex"
+}
+`}
+>
+
+{selectedConversation ? (
+
+<>
+
+<ChatHeader
+
+conversation={selectedConversation}
+
+onlineUsers={onlineUsers}
+
+typing={typing}
+
+connected={connected}
+
+userId={userId}
+
+role={role}
+
+showBackButton={
+role==="counselor"
+}
+
+onBack={openSidebar}
+
 />
 
-            <ChatMessages messages={messages} userId={userId} />
+<div
+className="
+flex-1
+min-h-0
+overflow-hidden
+"
+>
 
-            <MessageInput
-              conversation={selectedConversation}
-              userId={userId}
-              socket={socket}
-              setMessages={setMessages}
-            />
-          </>
-        ) : (
-          <EmptyState />
-        )}
-      </div>
-    </div>
-  );
+<ChatMessages
+
+messages={messages}
+
+userId={userId}
+
+/>
+
+</div>
+
+<div
+className="
+shrink-0
+border-t
+bg-white
+"
+>
+
+<MessageInput
+
+conversation={selectedConversation}
+
+userId={userId}
+
+socket={socket}
+
+setMessages={setMessages}
+
+/>
+
+</div>
+
+</>
+
+) : (
+
+<EmptyState/>
+
+)}
+
+</div>
+
+</div>
+
+);
 }

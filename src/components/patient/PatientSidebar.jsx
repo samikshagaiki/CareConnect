@@ -81,21 +81,23 @@ const links = [
   },
 ];
 
-export default function PatientSidebar() {
+export default function PatientSidebar({
+  mobile = false,
+}) {
   const pathname = usePathname();
 
   return (
     <aside
-      className="
-      w-72
-      bg-white
-      border-r
-      shadow-lg
-      flex
-      flex-col
-      p-6
-    "
-    >
+  className={`
+    bg-white
+    h-full
+    ${
+      mobile
+        ? "w-72 p-6"
+        : "w-80 border-r shadow-lg p-6"
+    }
+  `}
+>
       {/* Logo */}
 
       <div className="flex items-center gap-3 mb-10">
@@ -132,11 +134,16 @@ export default function PatientSidebar() {
               href={link.href}
               className={`
                 flex
-                items-center
-                gap-3
-                px-4
-                py-3
-                rounded-2xl
+items-center
+justify-center
+lg:justify-start
+gap-3
+min-w-fit
+lg:min-w-0
+px-4
+py-3
+rounded-2xl
+whitespace-nowrap
                 transition-all
                 ${
                   active
@@ -155,7 +162,8 @@ export default function PatientSidebar() {
             >
               <Icon size={18} />
 
-              {link.name}
+  {link.name}
+
             </Link>
           );
         })}
@@ -164,27 +172,33 @@ export default function PatientSidebar() {
       {/* Logout */}
 
       <button
-        onClick={() =>
-          signOut({
-            callbackUrl: "/",
-          })
-        }
-        className="
-          mt-6
-          flex
-          items-center
-          gap-3
-          rounded-2xl
-          px-4
-          py-3
-          text-red-500
-          hover:bg-red-50
-        "
-      >
-        <LogOut size={18} />
-
-        Logout
-      </button>
+              onClick={() =>
+                signOut({
+                  callbackUrl: "/",
+                })
+              }
+              className="
+              mt-6
+              flex
+      items-center
+      justify-center
+      lg:justify-start
+      gap-3
+      whitespace-nowrap
+      min-w-fit
+      lg:min-w-0
+              rounded-xl
+              px-4
+              py-3
+              text-red-500
+              hover:bg-red-50
+            "
+            >
+              <LogOut size={18} />
+              
+      Logout
+      
+            </button>
     </aside>
   );
 }

@@ -53,20 +53,28 @@ messages.length > 1
 
   let previousDate = "";
 
-  return (
-
+ return (
+  <div
+    className="
+      flex
+      h-full
+      flex-col
+      overflow-hidden
+      bg-slate-50
+    "
+  >
     <div
       className="
-      flex-1
-      overflow-y-auto
-      bg-slate-50
-      px-8
-      py-6
-    "
+        flex-1
+        overflow-y-auto
+        px-3
+        py-4
+        sm:px-5
+        md:px-6
+        lg:px-8
+      "
     >
-
       {messages.map((message) => {
-
         const currentDate =
           getDateLabel(message.createdAt);
 
@@ -76,29 +84,23 @@ messages.length > 1
         previousDate = currentDate;
 
         return (
-
           <div key={message._id}>
-
             {showDate && (
-
-              <div className="my-6 flex justify-center">
-
+              <div className="my-5 flex justify-center">
                 <span
                   className="
-                  rounded-full
-                  bg-slate-200
-                  px-4
-                  py-1
-                  text-xs
-                  font-semibold
-                  text-slate-600
-                "
+                    rounded-full
+                    bg-slate-200
+                    px-4
+                    py-1
+                    text-xs
+                    font-semibold
+                    text-slate-600
+                  "
                 >
                   {currentDate}
                 </span>
-
               </div>
-
             )}
 
             <MessageBubble
@@ -107,17 +109,16 @@ messages.length > 1
                 message.senderId === userId
               }
             />
-
           </div>
-
         );
-
       })}
 
-      <div ref={bottomRef} />
-
+      <div
+        ref={bottomRef}
+        className="h-2"
+      />
     </div>
-
-  );
+  </div>
+);
 
 }

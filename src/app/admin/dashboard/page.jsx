@@ -63,7 +63,7 @@ export default function AdminDashboard() {
         Administration Panel
       </p>
 
-      <h1 className="mt-2 text-4xl font-bold text-slate-800">
+      <h1 className="mt-2 text-3xl md:text-4xl font-bold text-slate-800">
         Admin Dashboard
       </h1>
 
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
       border
       border-slate-200
       bg-white
-      p-8
+      p-5 md:p-8
       shadow-sm
     "
     >
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
             Pending Reviews
           </p>
 
-          <h2 className="mt-2 text-4xl font-bold text-slate-800">
+          <h2 className="mt-2 text-3xl md:text-4xl font-bold text-slate-800">
             {counselors.length}
           </h2>
 
@@ -167,7 +167,7 @@ export default function AdminDashboard() {
 
       ) : (
 
-        <div className="grid gap-6">
+        <div className="grid-cols-1 gap-6">
 
           {counselors.map((counselor) => (
 
@@ -178,14 +178,14 @@ export default function AdminDashboard() {
               border
               border-slate-200
               bg-white
-              p-8
+              p-5 md:p-8
               shadow-sm
               transition
               hover:shadow-md
             "
             >
 
-              <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+              <div className="flex flex-col gap-6 xl:flex-row lg:items-start lg:justify-between">
 
                 <div className="flex-1">
 
@@ -222,7 +222,9 @@ export default function AdminDashboard() {
 
                   </div>
 
-                  <div className="mt-6 grid gap-4 md:grid-cols-3">
+                  <div className="mt-6 grid gap-4 grid-cols-1
+sm:grid-cols-2
+xl:grid-cols-3">
 
                     <div>
                       <p className="text-xs uppercase text-slate-400">
@@ -309,6 +311,8 @@ export default function AdminDashboard() {
                       )
                     }
                     className="
+                    w-full
+                    xl:w-auto
                     rounded-2xl
                     bg-blue-600
                     px-6
