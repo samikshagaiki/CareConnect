@@ -9,7 +9,10 @@ const CLIENT_URL =
 
 const io = new Server(PORT, {
   cors: {
-    origin: CLIENT_URL,
+      origin: [
+      CLIENT_URL,
+      process.env.FRONTEND_URL,
+    ],
     credentials: true,
   },
 });
