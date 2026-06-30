@@ -49,14 +49,38 @@ export default async function DashboardPage() {
     }).lean();
   }
 
-  const upcomingAppointment = await Appointment.findOne({
+ const upcomingAppointment = await Appointment.findOne({
+  patientId: session.user.id,
+
+  status: "accepted",
+
+  appointmentDate: {
+    $gte: new Date(),
+  },
+
+  sessionStatus: {
+    $nin: ["completed", "missed"],
+  },
+})
+.sort({
+  appointmentDate: 1,
+})
+.lean();
+
+const upcomingAppointmentsCount =
+  await Appointment.countDocuments({
     patientId: session.user.id,
+
     status: "accepted",
-  })
-    .sort({
-      appointmentDate: 1,
-    })
-    .lean();
+
+    appointmentDate: {
+      $gte: new Date(),
+    },
+
+    sessionStatus: {
+      $nin: ["completed", "missed"],
+    },
+  });
 
   const avatar =
     profile?.gender === "female"
@@ -135,7 +159,7 @@ max-w-lg
 
             <div>
               <h3 className="text-3xl font-bold text-white">
-                {upcomingAppointment ? "1" : "0"}
+                {upcomingAppointmentsCount}
               </h3>
 
               <p className="text-white/80">Appointments</p>
@@ -401,7 +425,7 @@ md:p-6
           <p className="font-medium">Upcoming Appointments</p>
 
           <h3 className="mt-4 text-4xl md:text-5xl font-bold">
-            {upcomingAppointment ? "1" : "0"}
+            {upcomingAppointmentsCount}
           </h3>
         </div>
       </div>

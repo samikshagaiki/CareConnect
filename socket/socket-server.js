@@ -155,6 +155,17 @@ socket.on("read-message", (data) => {
       Array.from(onlineUsers.keys())
     );
 
+    socket.on(
+  "notification-read",
+  (data) => {
+
+    io.to(data.userId).emit(
+      "notification-read"
+    );
+
+  }
+);
+
     console.log("🔴 Disconnected:", socket.id);
 
   });

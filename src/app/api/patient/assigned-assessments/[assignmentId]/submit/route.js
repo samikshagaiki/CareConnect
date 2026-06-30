@@ -7,6 +7,8 @@ import { connectDB } from "@/lib/mongodb";
 import AssessmentAssignment from "@/models/AssessmentAssignment";
 import AssessmentResponse from "@/models/AssessmentResponse";
 
+import { createNotification } from "@/lib/createNotification";
+
 export async function POST(
   request,
   context
@@ -58,30 +60,48 @@ export async function POST(
     }
 
     
-    await AssessmentResponse.create({
-      templateId:
-        assignment.templateId,
+    const response =
+  await AssessmentResponse.create({
+    templateId:
+      assignment.templateId,
 
-      patientId:
-        session.user.id,
+    patientId:
+      session.user.id,
 
-      assignedBy:
-        assignment.counselorId,
+    assignedBy:
+      assignment.counselorId,
 
-      answers:
-        body.answers,
+    answers:
+      body.answers,
 
-      status:
-        "completed",
+    status:
+      "completed",
 
-      submittedAt:
-        new Date(),
-    });
+    submittedAt:
+      new Date(),
+  });
 
     assignment.status =
       "completed";
 
     await assignment.save();
+
+    await createNotification({
+  userId:
+    assignment.counselorId,
+
+  type:
+    "assessment",
+
+  title:
+    "Assessment Submitted",
+
+  message:
+    "A patient has submitted an assessment.",
+
+  referenceId:
+    response._id.toString(),
+});
 
     return NextResponse.json({
       success: true,

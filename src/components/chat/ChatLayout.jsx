@@ -346,6 +346,10 @@ socket.on("stop-typing", ({ senderId }) => {
       }
     );
 
+    socket.emit("notification-read", {
+  userId,
+});
+
   }
 
   markAsRead();

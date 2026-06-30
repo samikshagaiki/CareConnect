@@ -63,9 +63,31 @@ export default function AssessmentPage() {
     }
   }
 
-  useEffect(() => {
-    fetchAssessment();
-  }, [assignmentId]);
+ useEffect(() => {
+
+  async function markNotificationsRead() {
+
+    await fetch(
+      "/api/notifications/read",
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          type: "assessment",
+        }),
+      }
+    );
+
+  }
+
+  markNotificationsRead();
+
+}, []);
 
   function updateAnswer(
     index,

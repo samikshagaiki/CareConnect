@@ -236,9 +236,33 @@ async function deletePost(
   }
 }
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+ useEffect(() => {
+
+  fetchPosts();
+
+  async function markNotificationsRead() {
+
+    await fetch(
+      "/api/notifications/read",
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          type: "community",
+        }),
+      }
+    );
+
+  }
+
+  markNotificationsRead();
+
+}, []);
 
  return (
   <div className="space-y-8">

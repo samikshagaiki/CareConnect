@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
+import useNotifications from "@/hooks/useNotifications";
 
 import {
   LayoutDashboard,
@@ -38,6 +39,8 @@ const links = [
     name: "Community",
     href: "/patient/community",
     icon: Users,
+    notificationType: "community",
+    
   },
   {
     name: "Find Counselor",
@@ -48,16 +51,22 @@ const links = [
     name: "Appointments",
     href: "/patient/appointments",
     icon: Calendar,
+    notificationType: "appointment",
+    
   },
   {
   name: "Support Chat",
   href: "/patient/chat",
   icon: MessageCircle,
+  notificationType: "chat",
+  
 },
   {
     name: "Assessments",
     href: "/patient/assessments",
     icon: BookOpen,
+    notificationType: "assessment",
+    
   },
   {
     name: "Resources",
@@ -85,6 +94,7 @@ export default function PatientSidebar({
   mobile = false,
 }) {
   const pathname = usePathname();
+  const { counts } = useNotifications();
 
   return (
     <aside
@@ -162,7 +172,44 @@ whitespace-nowrap
             >
               <Icon size={18} />
 
+  <div className="flex w-full items-center justify-between">
+
+
+
+<span className="flex-1">
   {link.name}
+</span>
+
+  {link.notificationType &&
+    counts[
+      link.notificationType
+    ] > 0 && (
+
+      <span
+        className="
+        flex
+        h-6
+        min-w-6
+        items-center
+        justify-center
+        rounded-full
+        bg-red-500
+        px-2
+        text-xs
+        font-semibold
+        text-white
+      "
+      >
+        {
+          counts[
+            link.notificationType
+          ]
+        }
+      </span>
+
+  )}
+
+</div>
 
             </Link>
           );

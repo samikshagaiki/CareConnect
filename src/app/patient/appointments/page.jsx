@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import useNotifications from "@/hooks/useNotifications";
 
 import {
   Calendar,
@@ -40,6 +41,9 @@ const [
   missedAppointments,
   setMissedAppointments,
 ] = useState([]);
+
+const { refreshNotifications } =
+  useNotifications();
 
 async function fetchAppointments() {
   try {
@@ -136,9 +140,33 @@ fetchAppointments();
     }
   }
 
-  useEffect(() => {
-  fetchAppointments();
-}, []);
+useEffect(() => {
+
+  async function markNotificationsRead() {
+
+    await fetch(
+      "/api/notifications/read",
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          type: "appointment",
+        }),
+      }
+    );
+
+    refreshNotifications();
+
+  }
+
+  markNotificationsRead();
+
+}, [refreshNotifications]);
 
   return (
     <div className="space-y-8">

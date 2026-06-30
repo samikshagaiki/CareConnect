@@ -7,6 +7,8 @@ import { connectDB } from "@/lib/mongodb";
 import Conversation from "@/models/Conversation";
 import Message from "@/models/Message";
 
+import { createNotification } from "@/lib/createNotification";
+
 export async function POST(request) {
   try {
     const session =
@@ -96,6 +98,22 @@ export async function POST(request) {
 
         text,
       });
+
+      await createNotification({
+  userId: receiverId,
+
+  type: "chat",
+
+  title: "New Message",
+
+  message:
+    session.user.role === "patient"
+      ? "Your counselor sent you a message."
+      : "A patient sent you a message.",
+
+  referenceId:
+    conversation._id.toString(),
+});
 
     // Update conversation
 

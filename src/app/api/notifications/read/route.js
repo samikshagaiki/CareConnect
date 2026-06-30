@@ -4,9 +4,6 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 
-import Conversation from "@/models/Conversation";
-import Message from "@/models/Message";
-
 import Notification from "@/models/Notification";
 
 export async function PATCH(request) {
@@ -27,36 +24,13 @@ export async function PATCH(request) {
 
     await connectDB();
 
-    const {
-      conversationId,
-    } = await request.json();
+    const { type } =
+      await request.json();
 
-    const conversation =
-      await Conversation.findById(
-        conversationId
-      );
-
-    if (!conversation) {
-      return NextResponse.json(
-        {
-          success: false,
-        },
-        {
-          status: 404,
-        }
-      );
-    }
-
-    // Mark all unread messages
-    // sent to this user as read
-
-    await Message.updateMany(
+    await Notification.updateMany(
       {
-        conversationId,
-
-        receiverId:
-          session.user.id,
-
+        userId: session.user.id,
+        type,
         isRead: false,
       },
       {
@@ -66,31 +40,12 @@ export async function PATCH(request) {
       }
     );
 
-    await Notification.updateMany(
-  {
-    userId: session.user.id,
-
-    type: "chat",
-
-    isRead: false,
-
-    referenceId:
-      conversationId,
-  },
-  {
-    $set: {
-      isRead: true,
-    },
-  }
-);
-
-    await conversation.save();
-
     return NextResponse.json({
       success: true,
     });
 
   } catch (error) {
+
     console.error(error);
 
     return NextResponse.json(
@@ -101,5 +56,6 @@ export async function PATCH(request) {
         status: 500,
       }
     );
+
   }
 }

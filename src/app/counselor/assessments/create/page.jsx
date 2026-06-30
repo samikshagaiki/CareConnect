@@ -165,6 +165,32 @@ export default function CreateAssessmentPage() {
     }
   }
 
+  useEffect(() => {
+
+  async function markNotificationsRead() {
+
+    await fetch(
+      "/api/notifications/read",
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          type: "assessment",
+        }),
+      }
+    );
+
+  }
+
+  markNotificationsRead();
+
+}, []);
+
  return (
   <div className="mx-auto max-w-6xl space-y-8">
 

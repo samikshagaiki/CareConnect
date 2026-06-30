@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
 
 import Appointment from "@/models/Appointment";
+import { createNotification } from "@/lib/createNotification";
 
 export async function PATCH(
   request,
@@ -63,6 +64,20 @@ export async function PATCH(
       new Date();
 
     await appointment.save();
+
+    await createNotification({
+  userId: appointment.patientId,
+
+  type: "appointment",
+
+  title: "Appointment Completed",
+
+  message:
+    "Your appointment has been marked as completed.",
+
+  referenceId:
+    appointment._id.toString(),
+});
 
     return NextResponse.json({
       success: true,

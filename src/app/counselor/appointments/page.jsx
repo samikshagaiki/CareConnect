@@ -1,12 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import useNotifications from "@/hooks/useNotifications";
 
 export default function CounselorAppointmentsPage() {
   const [
   appointments,
   setAppointments,
 ] = useState([]);
+
+const { refreshNotifications } =
+  useNotifications();
 
 const now = new Date();
 
@@ -41,6 +45,7 @@ const missedAppointments =
       a.sessionStatus !==
         "completed"
   );
+
 
   async function fetchAppointments() {
     const response =
@@ -94,11 +99,33 @@ async function completeAppointment(id) {
 
 }
 
- useEffect(() => {
+useEffect(() => {
 
-  fetchAppointments();
+  async function markNotificationsRead() {
 
-}, []);
+    await fetch(
+      "/api/notifications/read",
+      {
+        method: "PATCH",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify({
+          type: "appointment",
+        }),
+      }
+    );
+
+    refreshNotifications();
+
+  }
+
+  markNotificationsRead();
+
+}, [refreshNotifications]);
 
   return (
   <div className="space-y-8">

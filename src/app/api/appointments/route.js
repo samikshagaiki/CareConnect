@@ -6,6 +6,7 @@ import { connectDB } from "@/lib/mongodb";
 
 import Appointment from "@/models/Appointment";
 import CounselorAssignment from "@/models/CounselorAssignment";
+import { createNotification } from "@/lib/createNotification";
 
 export async function POST(
   request
@@ -70,6 +71,20 @@ export async function POST(
 
         reason: body.reason,
       });
+
+      await createNotification({
+  userId: assignment.counselorId,
+
+  type: "appointment",
+
+  title: "New Appointment Request",
+
+  message:
+    "A patient has requested an appointment.",
+
+  referenceId:
+    appointment._id.toString(),
+});
 
     return NextResponse.json({
       success: true,

@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/mongodb";
+import { createNotification } from "@/lib/createNotification";
 
 import CommunityPost from "@/models/CommunityPost";
 
@@ -29,10 +30,42 @@ export async function POST(request) {
     );
 
     if (alreadyLiked) {
-      post.likes = post.likes.filter((id) => id.toString() !== session.user.id);
-    } else {
-      post.likes.push(session.user.id);
-    }
+
+  post.likes = post.likes.filter(
+    (id) => id.toString() !== session.user.id
+  );
+
+} else {
+
+  post.likes.push(session.user.id);
+
+  if (
+    post.authorId?.toString() !==
+    session.user.id
+  ) {
+
+    await createNotification({
+
+      userId:
+        post.authorId.toString(),
+
+      type:
+        "community",
+
+      title:
+        "New Like ❤️",
+
+      message:
+        "Someone liked your community post.",
+
+      referenceId:
+        post._id.toString(),
+
+    });
+
+  }
+
+}
 
     await post.save();
 
