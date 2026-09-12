@@ -14,16 +14,16 @@ export async function PATCH(
     const { id } =
       await context.params;
       
-const appointment =
-  await Appointment.findByIdAndUpdate(
-    id,
-    {
-      status: "rejected",
-    },
-    {
-      new: true,
-    }
-  );
+    const appointment = await Appointment.findByIdAndUpdate(
+      id,
+      {
+        status: "rejected",
+        sessionStatus: "cancelled",
+      },
+      {
+        new: true,
+      }
+    );
 
 await createNotification({
   userId: appointment.patientId,

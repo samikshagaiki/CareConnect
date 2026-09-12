@@ -12,6 +12,8 @@ import CounselorProfile from "@/models/CounselorProfile";
 import Appointment from "@/models/Appointment";
 import AssessmentResponse from "@/models/AssessmentResponse";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
 
@@ -49,36 +51,32 @@ export default async function DashboardPage() {
     }).lean();
   }
 
- const upcomingAppointment = await Appointment.findOne({
-  patientId: session.user.id,
-
-  status: "accepted",
-
-  appointmentDate: {
-    $gte: new Date(),
-  },
-
-  sessionStatus: {
-    $nin: ["completed", "missed"],
-  },
-})
-.sort({
-  appointmentDate: 1,
-})
-.lean();
-
-const upcomingAppointmentsCount =
-  await Appointment.countDocuments({
+  const upcomingAppointment = await Appointment.findOne({
     patientId: session.user.id,
-
-    status: "accepted",
-
+    status: { $in: ["pending", "accepted"] },
+    sessionStatus: "upcoming",
     appointmentDate: {
       $gte: new Date(),
     },
+  })
+    .sort({
+      appointmentDate: 1,
+    })
+    .lean();
 
-    sessionStatus: {
-      $nin: ["completed", "missed"],
+  let appointmentCounselor = null;
+  if (upcomingAppointment?.counselorId) {
+    appointmentCounselor = await CounselorProfile.findOne({
+      userId: upcomingAppointment.counselorId,
+    }).lean();
+  }
+
+  const upcomingAppointmentsCount = await Appointment.countDocuments({
+    patientId: session.user.id,
+    status: { $in: ["pending", "accepted"] },
+    sessionStatus: "upcoming",
+    appointmentDate: {
+      $gte: new Date(),
     },
   });
 
@@ -335,22 +333,69 @@ p-5
 md:p-6
 "
         >
-          <h3 className="text-lg md:text-xl font-semibold text-sky-500">
-            📅 Upcoming Appointment
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg md:text-xl font-semibold text-sky-600">
+              📅 Upcoming Appointment
+            </h3>
+            {upcomingAppointment && (
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  upcomingAppointment.status === "accepted"
+                    ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                    : "bg-amber-50 text-amber-700 border border-amber-200"
+                }`}
+              >
+                {upcomingAppointment.status === "accepted" ? "Confirmed" : "Pending Confirmation"}
+              </span>
+            )}
+          </div>
 
           {upcomingAppointment ? (
-            <div className="mt-4">
-              <p className="font-semibold">
-                {new Date(upcomingAppointment.appointmentDate).toLocaleString()}
+            <div className="mt-4 space-y-2">
+              <p className="font-semibold text-slate-800 text-lg">
+                {new Date(upcomingAppointment.appointmentDate).toLocaleDateString(undefined, {
+                  weekday: "short",
+                  month: "short",
+                  day: "numeric",
+                })}{" "}
+                •{" "}
+                {new Date(upcomingAppointment.appointmentDate).toLocaleTimeString(undefined, {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
               </p>
 
-              <p className="mt-3 text-slate-500">
-                {upcomingAppointment.reason}
+              <p className="text-sm font-medium text-slate-600">
+                Counselor: {appointmentCounselor?.fullName || counselor?.fullName || "Assigned Counselor"}
               </p>
+
+              {upcomingAppointment.reason && (
+                <p className="text-sm text-slate-500 line-clamp-2">
+                  &ldquo;{upcomingAppointment.reason}&rdquo;
+                </p>
+              )}
+
+              <div className="pt-2">
+                <Link
+                  href="/patient/appointments"
+                  className="inline-flex items-center text-sm font-semibold text-sky-600 hover:text-sky-700"
+                >
+                  Manage Appointments →
+                </Link>
+              </div>
             </div>
           ) : (
-            <p className="mt-4 text-slate-500">No appointments scheduled.</p>
+            <div className="mt-4">
+              <p className="text-slate-500">No appointments scheduled.</p>
+              <div className="pt-2">
+                <Link
+                  href="/patient/appointments"
+                  className="inline-flex items-center text-sm font-semibold text-sky-600 hover:text-sky-700"
+                >
+                  Book an Appointment →
+                </Link>
+              </div>
+            </div>
           )}
         </div>
       </div>

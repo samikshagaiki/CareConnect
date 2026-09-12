@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import useNotifications from "@/hooks/useNotifications";
 
@@ -22,72 +22,100 @@ export default function AppointmentsPage() {
   const [loading, setLoading] =
     useState(false);
 
-  const [
-  appointments,
-  setAppointments,
-] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [fetching, setFetching] = useState(true);
+  const [reschedulingAppt, setReschedulingAppt] = useState(null);
+  const [rescheduleDate, setRescheduleDate] = useState("");
 
-const [
-  upcomingAppointments,
-  setUpcomingAppointments,
-] = useState([]);
+  const { refreshNotifications } = useNotifications();
 
-const [
-  completedAppointments,
-  setCompletedAppointments,
-] = useState([]);
+  const fetchAppointments = useCallback(async () => {
+    try {
+      setFetching(true);
+      const response = await fetch("/api/patient/appointments");
+      const data = await response.json();
 
-const [
-  missedAppointments,
-  setMissedAppointments,
-] = useState([]);
-
-const { refreshNotifications } =
-  useNotifications();
-
-async function fetchAppointments() {
-  try {
-    const response =
-      await fetch(
-        "/api/patient/appointments"
-      );
-
-    const data =
-      await response.json();
-
-    if (data.success) {
-      setAppointments(
-        data.appointments
-      );
-
-      setUpcomingAppointments(
-        data.appointments.filter(
-          (appointment) =>
-            appointment.sessionStatus ===
-            "upcoming"
-        )
-      );
-
-      setCompletedAppointments(
-        data.appointments.filter(
-          (appointment) =>
-            appointment.sessionStatus ===
-            "completed"
-        )
-      );
-
-      setMissedAppointments(
-        data.appointments.filter(
-          (appointment) =>
-            appointment.sessionStatus ===
-            "missed"
-        )
-      );
+      if (data.success) {
+        setAppointments(data.appointments || []);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setFetching(false);
     }
-  } catch (error) {
-    console.error(error);
+  }, []);
+
+  useEffect(() => {
+    fetchAppointments();
+  }, [fetchAppointments]);
+
+  const now = new Date();
+
+  const pendingAppointments = appointments.filter(
+    (a) => a.status === "pending" && a.sessionStatus !== "cancelled"
+  );
+
+  const upcomingAppointments = appointments.filter(
+    (a) =>
+      a.status === "accepted" &&
+      a.sessionStatus === "upcoming" &&
+      new Date(a.appointmentDate) >= now
+  );
+
+  const completedAppointments = appointments.filter(
+    (a) => a.sessionStatus === "completed" || a.status === "completed"
+  );
+
+  const pastOrCancelledAppointments = appointments.filter(
+    (a) =>
+      a.status === "rejected" ||
+      a.status === "cancelled" ||
+      a.sessionStatus === "missed" ||
+      (new Date(a.appointmentDate) < now && a.sessionStatus !== "completed" && a.status !== "pending")
+  );
+
+  async function handleCancel(id) {
+    if (!confirm("Are you sure you want to cancel this appointment request?")) return;
+    try {
+      const response = await fetch(`/api/appointments/${id}/cancel`, {
+        method: "PATCH",
+      });
+      const data = await response.json();
+      if (data.success) {
+        fetchAppointments();
+      } else {
+        alert(data.message || "Failed to cancel appointment.");
+      }
+    } catch {
+      alert("Error cancelling appointment.");
+    }
   }
-}
+
+  async function handleRescheduleSubmit(e) {
+    e.preventDefault();
+    if (!reschedulingAppt || !rescheduleDate) return;
+
+    try {
+      const response = await fetch(
+        `/api/appointments/${reschedulingAppt._id}/reschedule`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ appointmentDate: rescheduleDate }),
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setReschedulingAppt(null);
+        setRescheduleDate("");
+        fetchAppointments();
+      } else {
+        alert(data.message || "Failed to reschedule.");
+      }
+    } catch {
+      alert("Error rescheduling appointment.");
+    }
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -95,78 +123,55 @@ async function fetchAppointments() {
     try {
       setLoading(true);
 
-      const response =
-        await fetch(
-          "/api/appointments",
-          {
-            method: "POST",
+      const response = await fetch("/api/appointments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          appointmentDate: date,
+          reason,
+        }),
+      });
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              appointmentDate:
-                date,
-
-              reason,
-            }),
-          }
-        );
-
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (!data.success) {
-        alert(data.message);
+        alert(data.message || "Failed to request appointment");
         return;
       }
 
-      alert(
-        "Appointment request sent successfully 💜"
-      );
-
+      alert("Appointment request sent successfully 💜");
       setDate("");
-setReason("");
-
-fetchAppointments();
+      setReason("");
+      fetchAppointments();
     } catch {
-      alert(
-        "Something went wrong"
-      );
+      alert("Something went wrong");
     } finally {
       setLoading(false);
     }
   }
 
-useEffect(() => {
-
-  async function markNotificationsRead() {
-
-    await fetch(
-      "/api/notifications/read",
-      {
-        method: "PATCH",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify({
-          type: "appointment",
-        }),
+  useEffect(() => {
+    async function markNotificationsRead() {
+      try {
+        await fetch("/api/notifications/read", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "appointment",
+          }),
+        });
+        refreshNotifications();
+      } catch (e) {
+        console.error("Failed to mark notifications read", e);
       }
-    );
+    }
 
-    refreshNotifications();
-
-  }
-
-  markNotificationsRead();
-
-}, [refreshNotifications]);
+    markNotificationsRead();
+  }, [refreshNotifications]);
 
   return (
     <div className="space-y-8">
@@ -652,296 +657,329 @@ useEffect(() => {
 
       {/* APPOINTMENT HISTORY */}
 
-<div className="space-y-8">
+      <div className="space-y-8">
 
-  {/* STATS */}
+        {/* STATS */}
 
-  <div className="grid gap-5 md:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 
-    <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <p className="text-sm text-slate-500">
-        Total Requests
-      </p>
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="text-sm text-slate-500">
+              Total Requests
+            </p>
+            <h2 className="mt-2 text-4xl font-bold">
+              {appointments.length}
+            </h2>
+          </div>
 
-      <h2 className="mt-2 text-4xl font-bold">
-        {appointments.length}
-      </h2>
-    </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="text-sm text-slate-500">
+              Pending Approval
+            </p>
+            <h2 className="mt-2 text-4xl font-bold text-amber-600">
+              {pendingAppointments.length}
+            </h2>
+          </div>
 
-    <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <p className="text-sm text-slate-500">
-        Upcoming
-      </p>
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="text-sm text-slate-500">
+              Upcoming
+            </p>
+            <h2 className="mt-2 text-4xl font-bold text-blue-600">
+              {upcomingAppointments.length}
+            </h2>
+          </div>
 
-      <h2 className="mt-2 text-4xl font-bold text-blue-600">
-        {upcomingAppointments.length}
-      </h2>
-    </div>
+          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm">
+            <p className="text-sm text-slate-500">
+              Completed
+            </p>
+            <h2 className="mt-2 text-4xl font-bold text-green-600">
+              {completedAppointments.length}
+            </h2>
+          </div>
 
-    <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <p className="text-sm text-slate-500">
-        Completed
-      </p>
+        </div>
 
-      <h2 className="mt-2 text-4xl font-bold text-green-600">
-        {completedAppointments.length}
-      </h2>
-    </div>
-
-    <div className="rounded-3xl border bg-white p-6 shadow-sm">
-      <p className="text-sm text-slate-500">
-        Missed
-      </p>
-
-      <h2 className="mt-2 text-4xl font-bold text-red-600">
-        {missedAppointments.length}
-      </h2>
-    </div>
-
-  </div>
-
-  {/* UPCOMING */}
-
-  <section>
-
-    <h2 className="mb-5 text-2xl font-bold">
-      Upcoming Sessions
-    </h2>
-
-    <div className="space-y-4">
-
-      {upcomingAppointments.map(
-        (appointment) => (
-
-          <div
-            key={appointment._id}
-            className="
-            rounded-3xl
-            border
-            bg-white
-            p-6
-            shadow-sm
-          "
-          >
-
-            <div className="flex justify-between">
-
-              <div>
-
-                <h3 className="font-semibold">
-                  Scheduled Session
-                </h3>
-
-                <p className="mt-2 text-slate-500">
-                  {new Date(
-                    appointment.appointmentDate
-                  ).toLocaleString()}
-                </p>
-
-              </div>
-
-              <span
-                className="
-                rounded-full
-                bg-blue-100
-                px-3
-                py-1
-                text-sm
-                text-blue-700
-              "
-              >
-                Upcoming
+        {/* PENDING SESSIONS */}
+        {pendingAppointments.length > 0 && (
+          <section>
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-slate-800">
+                Pending Requests
+              </h2>
+              <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 border border-amber-200">
+                Awaiting Counselor
               </span>
-
             </div>
 
-            <p className="mt-4">
-              {appointment.reason}
+            <div className="space-y-4">
+              {pendingAppointments.map((appointment) => (
+                <div
+                  key={appointment._id}
+                  className="rounded-3xl border border-amber-100 bg-amber-50/40 p-6 shadow-sm"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                      <h3 className="font-semibold text-slate-800 text-lg">
+                        Session Request
+                      </h3>
+                      <p className="mt-1 text-slate-600">
+                        Requested for: {new Date(appointment.appointmentDate).toLocaleString()}
+                      </p>
+                    </div>
+                    <span className="self-start rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
+                      Pending Confirmation
+                    </span>
+                  </div>
+
+                  {appointment.reason && (
+                    <p className="mt-4 text-slate-700">
+                      {appointment.reason}
+                    </p>
+                  )}
+
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReschedulingAppt(appointment);
+                        setRescheduleDate(
+                          new Date(appointment.appointmentDate).toISOString().slice(0, 16)
+                        );
+                      }}
+                      className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                    >
+                      Reschedule
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleCancel(appointment._id)}
+                      className="rounded-xl border border-red-200 bg-white px-5 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                    >
+                      Cancel Request
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* UPCOMING */}
+        <section>
+          <h2 className="mb-5 text-2xl font-bold text-slate-800">
+            Upcoming Sessions
+          </h2>
+
+          {upcomingAppointments.length === 0 ? (
+            <div className="rounded-3xl border border-slate-100 bg-white p-8 text-center text-slate-500">
+              No confirmed upcoming sessions scheduled right now.
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {upcomingAppointments.map((appointment) => (
+                <div
+                  key={appointment._id}
+                  className="rounded-3xl border border-blue-100 bg-white p-6 shadow-sm"
+                >
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                      <h3 className="font-semibold text-slate-800 text-lg">
+                        Confirmed Counseling Session
+                      </h3>
+                      <p className="mt-1 text-slate-600 font-medium">
+                        {new Date(appointment.appointmentDate).toLocaleString()}
+                      </p>
+                    </div>
+
+                    <span className="self-start rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 border border-blue-200">
+                      Confirmed Upcoming
+                    </span>
+                  </div>
+
+                  {appointment.reason && (
+                    <p className="mt-4 text-slate-600">
+                      {appointment.reason}
+                    </p>
+                  )}
+
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link
+                      href="/patient/chat"
+                      className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+                    >
+                      💬 Chat with Counselor
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReschedulingAppt(appointment);
+                        setRescheduleDate(
+                          new Date(appointment.appointmentDate).toISOString().slice(0, 16)
+                        );
+                      }}
+                      className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                    >
+                      Reschedule
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleCancel(appointment._id)}
+                      className="rounded-xl border border-red-200 bg-white px-5 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                    >
+                      Cancel Session
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* COMPLETED */}
+        {completedAppointments.length > 0 && (
+          <section>
+            <h2 className="mb-5 text-2xl font-bold text-green-800">
+              Completed Sessions
+            </h2>
+
+            <div className="space-y-4">
+              {completedAppointments.map((appointment) => (
+                <div
+                  key={appointment._id}
+                  className="rounded-3xl border border-green-200 bg-green-50/60 p-6"
+                >
+                  <div className="flex justify-between items-center">
+                    <p className="font-semibold text-green-900">
+                      Session Completed
+                    </p>
+                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
+                      Completed
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-slate-600">
+                    {new Date(appointment.appointmentDate).toLocaleString()}
+                  </p>
+
+                  {appointment.reason && (
+                    <p className="mt-3 text-slate-700">
+                      {appointment.reason}
+                    </p>
+                  )}
+
+                  <div className="mt-6 flex gap-3">
+                    <Link
+                      href="/patient/chat"
+                      className="rounded-xl border border-blue-300 bg-white px-5 py-2.5 text-sm font-medium text-blue-600 transition hover:bg-blue-50"
+                    >
+                      Continue Conversation
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* MISSED & CANCELLED */}
+        {pastOrCancelledAppointments.length > 0 && (
+          <section>
+            <h2 className="mb-5 text-2xl font-bold text-slate-700">
+              Past & Cancelled
+            </h2>
+
+            <div className="space-y-4">
+              {pastOrCancelledAppointments.map((appointment) => (
+                <div
+                  key={appointment._id}
+                  className="rounded-3xl border border-slate-200 bg-slate-50 p-6"
+                >
+                  <div className="flex justify-between items-center">
+                    <p className="font-semibold text-slate-800">
+                      {appointment.status === "cancelled"
+                        ? "Appointment Cancelled"
+                        : appointment.status === "rejected"
+                        ? "Appointment Declined"
+                        : "Session Missed"}
+                    </p>
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        appointment.status === "cancelled"
+                          ? "bg-slate-200 text-slate-700"
+                          : "bg-red-100 text-red-700"
+                      }`}
+                    >
+                      {appointment.status === "cancelled"
+                        ? "Cancelled"
+                        : appointment.status === "rejected"
+                        ? "Declined"
+                        : "Missed"}
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-slate-500">
+                    {new Date(appointment.appointmentDate).toLocaleString()}
+                  </p>
+
+                  {appointment.reason && (
+                    <p className="mt-3 text-slate-600">
+                      {appointment.reason}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+      </div>
+
+      {/* RESCHEDULE MODAL */}
+      {reschedulingAppt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl border border-slate-200">
+            <h3 className="text-xl font-bold text-slate-800">Reschedule Appointment</h3>
+            <p className="mt-1 text-sm text-slate-500">
+              Select a new date and time for your counseling session.
             </p>
 
-            <div className="mt-6 flex gap-3">
+            <form onSubmit={handleRescheduleSubmit} className="mt-5 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  New Date & Time
+                </label>
+                <input
+                  type="datetime-local"
+                  required
+                  value={rescheduleDate}
+                  onChange={(e) => setRescheduleDate(e.target.value)}
+                  className="w-full rounded-xl border border-slate-200 bg-[#FAFCFF] px-4 py-3 outline-none focus:ring-2 focus:ring-purple-200"
+                />
+              </div>
 
-  <Link
-    href="/patient/chat"
-    className="
-    rounded-xl
-    bg-blue-600
-    px-5
-    py-2.5
-    font-medium
-    text-white
-    transition
-    hover:bg-blue-700
-  "
-  >
-    💬 Chat with Counselor
-  </Link>
-
-  <Link
-    href="/patient/profile"
-    className="
-    rounded-xl
-    border
-    border-slate-300
-    px-5
-    py-2.5
-    font-medium
-    text-slate-700
-    transition
-    hover:bg-slate-50
-  "
-  >
-    View Counselor
-  </Link>
-
-</div>
-
-
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setReschedulingAppt(null)}
+                  className="rounded-xl border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="rounded-xl bg-purple-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-purple-700"
+                >
+                  Confirm Reschedule
+                </button>
+              </div>
+            </form>
           </div>
-
-        )
+        </div>
       )}
-
-    </div>
-
-  </section>
-
-  {/* COMPLETED */}
-
-  <section>
-
-    <h2 className="mb-5 text-2xl font-bold text-green-700">
-      Completed Sessions
-    </h2>
-
-    <div className="space-y-4">
-
-      {completedAppointments.map(
-        (appointment) => (
-
-          <div
-            key={appointment._id}
-            className="
-            rounded-3xl
-            border
-            bg-green-50
-            p-6
-          "
-          >
-
-            <p className="font-semibold">
-              Session Completed
-            </p>
-
-            <p className="mt-2 text-slate-500">
-              {new Date(
-                appointment.appointmentDate
-              ).toLocaleString()}
-            </p>
-
-            <p className="mt-4">
-              {appointment.reason}
-            </p>
-
-            <div className="mt-6 flex gap-3">
-
-  <Link
-    href="/patient/chat"
-    className="
-    rounded-xl
-    border
-    border-blue-300
-    px-5
-    py-2.5
-    font-medium
-    text-blue-600
-    transition
-    hover:bg-blue-50
-  "
-  >
-    Continue Conversation
-  </Link>
-
-</div>
-
-          </div>
-
-        )
-      )}
-
-    </div>
-
-  </section>
-
-  {/* MISSED */}
-
-  <section>
-
-    <h2 className="mb-5 text-2xl font-bold text-red-700">
-      Missed Sessions
-    </h2>
-
-    <div className="space-y-4">
-
-      {missedAppointments.map(
-        (appointment) => (
-
-          <div
-            key={appointment._id}
-            className="
-            rounded-3xl
-            border
-            border-red-200
-            bg-red-50
-            p-6
-          "
-          >
-
-            <p className="font-semibold">
-              Session Missed
-            </p>
-
-            <p className="mt-2 text-slate-500">
-              {new Date(
-                appointment.appointmentDate
-              ).toLocaleString()}
-            </p>
-
-            <p className="mt-4">
-              {appointment.reason}
-            </p>
-
-            <div className="mt-6">
-
-  <Link
-    href="/patient/appointments"
-    className="
-    inline-flex
-    rounded-xl
-    bg-red-500
-    px-5
-    py-2.5
-    font-medium
-    text-white
-    transition
-    hover:bg-red-600
-  "
-  >
-    Reschedule Session
-  </Link>
-
-</div>
-
-          </div>
-
-        )
-      )}
-
-    </div>
-
-  </section>
-
-</div>
 
     </div>
   );

@@ -40,37 +40,25 @@ export async function GET() {
           "assigned",
       }).lean();
 
-    const assessments =
-      await Promise.all(
-        assignments.map(
-          async (
-            assignment
-          ) => {
-            const template =
-              await AssessmentTemplate.findById(
-                assignment.templateId
-              ).lean();
+    const populatedAssessments = await Promise.all(
+      assignments.map(async (assignment) => {
+        const template = await AssessmentTemplate.findById(
+          assignment.templateId
+        ).lean();
 
-            return {
-              assignmentId:
-                assignment._id,
+        if (!template) return null;
 
-              templateId:
-                template._id,
+        return {
+          assignmentId: assignment._id.toString(),
+          templateId: template._id.toString(),
+          title: template.title,
+          description: template.description,
+          questionCount: template.questions?.length || 0,
+        };
+      })
+    );
 
-              title:
-                template.title,
-
-              description:
-                template.description,
-
-              questionCount:
-                template.questions
-                  ?.length || 0,
-            };
-          }
-        )
-      );
+    const assessments = populatedAssessments.filter(Boolean);
 
     return NextResponse.json({
       success: true,

@@ -605,85 +605,63 @@ gap-6
               "
               >
 
-                <div className="flex justify-between">
-
+                <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-lg md:text-xl font-semibold">
-                      {
-                        appointment.patient
-                          ?.anonymousName
-                      }
+                      {appointment.patient?.anonymousName || "Patient"}
                     </h3>
 
-                    <p className="mt-1 text-slate-500">
+                    <p className="mt-1 text-slate-500 text-sm">
                       Counseling Session
                     </p>
                   </div>
 
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      appointment.status === "accepted"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                        : "bg-amber-50 text-amber-700 border border-amber-200"
+                    }`}
+                  >
+                    {appointment.status === "accepted" ? "Confirmed" : "Pending Confirmation"}
+                  </span>
                 </div>
 
                 <div className="mt-5 space-y-3">
-
-                  <p className="font-medium">
-                    {new Date(
-                      appointment.appointmentDate
-                    ).toLocaleString()}
+                  <p className="font-semibold text-slate-800">
+                    {new Date(appointment.appointmentDate).toLocaleString()}
                   </p>
 
-                  <p className="text-slate-600">
-                    {appointment.reason}
-                  </p>
+                  {appointment.reason && (
+                    <p className="text-slate-600 text-sm">
+                      {appointment.reason}
+                    </p>
+                  )}
 
-                  <div
-className="
-mt-6
-flex
-flex-col
-sm:flex-row
-gap-3
-"
->
+                  <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                    <Link
+                      href="/counselor/chat"
+                      className="w-full rounded-xl text-center sm:w-auto bg-blue-600 px-5 py-2.5 text-white hover:bg-blue-700"
+                    >
+                      💬 Open Chat
+                    </Link>
 
-<Link
-href="/counselor/chat"
-className="
-w-full
-rounded-xl
-text-center
-sm:w-auto
-bg-blue-600
-px-5
-py-2.5
-text-white
-hover:bg-blue-700
-"
->
+                    {appointment.patient?.userId && (
+                      <Link
+                        href={`/counselor/patients/${appointment.patient.userId}`}
+                        className="w-full rounded-xl text-center sm:w-auto border border-slate-300 px-5 py-2.5 text-slate-700 hover:bg-slate-50"
+                      >
+                        View Patient
+                      </Link>
+                    )}
 
-💬 Open Chat
-
-</Link>
-
-<Link
-href={`/counselor/patients/${appointment.patient.userId}`}
-className="
-w-full
-rounded-xl
-text-center
-sm:w-auto
-border
-border-slate-300
-px-5
-py-2.5
-hover:bg-slate-50
-"
->
-
-View Patient
-
-</Link>
-
-</div>
-
+                    <Link
+                      href="/counselor/appointments"
+                      className="w-full rounded-xl text-center sm:w-auto border border-slate-200 px-4 py-2.5 text-slate-600 hover:bg-slate-50 text-sm font-medium"
+                    >
+                      Manage →
+                    </Link>
+                  </div>
                 </div>
 
               </div>

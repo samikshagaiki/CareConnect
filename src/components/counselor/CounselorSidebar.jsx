@@ -39,11 +39,6 @@ const links = [
     notificationType: "appointment",
     
   },
-  {
-    name: "Profile",
-    href: "/counselor/profile",
-    icon: User,
-  },
 ];
 
 export default function CounselorSidebar({ mobile = false }) {

@@ -17,6 +17,7 @@ import {
   User,
   LogOut,
   MessageCircle,
+  Gamepad,
 } from "lucide-react";
 
 const links = [
@@ -79,14 +80,9 @@ const links = [
     icon: BarChart3,
   },
   {
-    name: "Maya AI",
-    href: "/patient/maya",
-    icon: Bot,
-  },
-  {
-    name: "Profile",
-    href: "/patient/profile",
-    icon: User,
+    name: "Games",
+    href: "/patient/games",
+    icon: Gamepad,
   },
 ];
 

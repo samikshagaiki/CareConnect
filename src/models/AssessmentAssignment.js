@@ -37,6 +37,10 @@ const AssessmentAssignmentSchema =
     }
   );
 
+AssessmentAssignmentSchema.index({ patientId: 1, status: 1 });
+AssessmentAssignmentSchema.index({ counselorId: 1, status: 1 });
+AssessmentAssignmentSchema.index({ _id: 1, patientId: 1 });
+
 export default
   mongoose.models
     .AssessmentAssignment ||

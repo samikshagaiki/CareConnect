@@ -37,17 +37,16 @@ export async function GET(
     const { assignmentId } =
       await context.params;
 
-    const assignment =
-      await AssessmentAssignment.findById(
-        assignmentId
-      ).lean();
+    const assignment = await AssessmentAssignment.findOne({
+      _id: assignmentId,
+      patientId: session.user.id,
+    }).lean();
 
     if (!assignment) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Assessment not found",
+          message: "Assessment assignment not found",
         },
         {
           status: 404,
@@ -55,10 +54,21 @@ export async function GET(
       );
     }
 
-    const template =
-      await AssessmentTemplate.findById(
-        assignment.templateId
-      ).lean();
+    const template = await AssessmentTemplate.findById(
+      assignment.templateId
+    ).lean();
+
+    if (!template) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Assessment template not found",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
 
     return NextResponse.json({
       success: true,

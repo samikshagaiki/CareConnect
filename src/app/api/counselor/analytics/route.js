@@ -48,7 +48,7 @@ export async function GET() {
           session.user.id,
 
         status:
-          "pending",
+          "assigned",
       });
 
     const completedAssessments =
@@ -59,21 +59,19 @@ export async function GET() {
 
     const now = new Date();
 
-const appointments =
-  await Appointment.find({
-    counselorId:
-      session.user.id,
-  });
+    const appointments =
+      await Appointment.find({
+        counselorId:
+          session.user.id,
+      }).lean();
 
-const upcomingSessions =
-  appointments.filter(
-    (appointment) =>
-      appointment.status ===
-        "accepted" &&
-      new Date(
-        appointment.appointmentDate
-      ) > now
-  ).length;
+    const upcomingSessions =
+      appointments.filter(
+        (appointment) =>
+          (appointment.status === "accepted" || appointment.status === "pending") &&
+          appointment.sessionStatus === "upcoming" &&
+          new Date(appointment.appointmentDate) >= now
+      ).length;
 
 const completedSessions =
   appointments.filter(

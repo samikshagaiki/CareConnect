@@ -1,131 +1,130 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 import useNotifications from "@/hooks/useNotifications";
 
 export default function CounselorAppointmentsPage() {
-  const [
-  appointments,
-  setAppointments,
-] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-const { refreshNotifications } =
-  useNotifications();
+  const { refreshNotifications } = useNotifications();
 
-const now = new Date();
+  const fetchAppointments = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/counselor/appointments");
+      const data = await response.json();
 
-const pendingAppointments =
-  appointments.filter(
-    (a) =>
-      a.status === "pending"
+      if (data.success) {
+        setAppointments(data.appointments || []);
+      }
+    } catch (error) {
+      console.error("Failed to load appointments:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAppointments();
+  }, [fetchAppointments]);
+
+  const now = new Date();
+
+  const pendingAppointments = appointments.filter(
+    (a) => a.status === "pending" && a.sessionStatus !== "cancelled"
   );
 
-const upcomingAppointments =
-  appointments.filter(
+  const upcomingAppointments = appointments.filter(
     (a) =>
       a.status === "accepted" &&
-      new Date(
-        a.appointmentDate
-      ) > now
+      a.sessionStatus === "upcoming" &&
+      new Date(a.appointmentDate) >= now
   );
 
-const completedAppointments =
-  appointments.filter(
+  const completedAppointments = appointments.filter(
+    (a) => a.sessionStatus === "completed" || a.status === "completed"
+  );
+
+  const missedAppointments = appointments.filter(
     (a) =>
-      a.sessionStatus ===
-      "completed"
+      a.status === "rejected" ||
+      a.status === "cancelled" ||
+      a.sessionStatus === "missed" ||
+      (new Date(a.appointmentDate) < now && a.sessionStatus !== "completed" && a.status !== "pending")
   );
-
-const missedAppointments =
-  appointments.filter(
-    (a) =>
-      new Date(
-        a.appointmentDate
-      ) < now &&
-      a.sessionStatus !==
-        "completed"
-  );
-
-
-  async function fetchAppointments() {
-    const response =
-      await fetch(
-        "/api/counselor/appointments"
-      );
-
-    const data =
-      await response.json();
-
-    if (data.success) {
-      setAppointments(
-        data.appointments
-      );
-    }
-  }
-
 
   async function accept(id) {
-    await fetch(
-      `/api/counselor/appointments/${id}/accept`,
-      {
+    try {
+      await fetch(`/api/counselor/appointments/${id}/accept`, {
         method: "PATCH",
-      }
-    );
-
-    fetchAppointments();
+      });
+      fetchAppointments();
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async function reject(id) {
-    await fetch(
-      `/api/counselor/appointments/${id}/reject`,
-      {
+    try {
+      await fetch(`/api/counselor/appointments/${id}/reject`, {
         method: "PATCH",
-      }
-    );
-
-    fetchAppointments();
-  }
-
-async function completeAppointment(id) {
-
-  await fetch(
-    `/api/counselor/appointments/${id}/complete`,
-    {
-      method: "PATCH",
+      });
+      fetchAppointments();
+    } catch (e) {
+      console.error(e);
     }
-  );
-
-  fetchAppointments();
-
-}
-
-useEffect(() => {
-
-  async function markNotificationsRead() {
-
-    await fetch(
-      "/api/notifications/read",
-      {
-        method: "PATCH",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify({
-          type: "appointment",
-        }),
-      }
-    );
-
-    refreshNotifications();
-
   }
 
-  markNotificationsRead();
+  async function completeAppointment(id) {
+    try {
+      await fetch(`/api/counselor/appointments/${id}/complete`, {
+        method: "PATCH",
+      });
+      fetchAppointments();
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
-}, [refreshNotifications]);
+  async function cancelAppointment(id) {
+    if (!confirm("Are you sure you want to cancel this appointment?")) return;
+    try {
+      const res = await fetch(`/api/appointments/${id}/cancel`, {
+        method: "PATCH",
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchAppointments();
+      } else {
+        alert(data.message || "Failed to cancel");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    async function markNotificationsRead() {
+      try {
+        await fetch("/api/notifications/read", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "appointment",
+          }),
+        });
+        refreshNotifications();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    markNotificationsRead();
+  }, [refreshNotifications]);
 
   return (
   <div className="space-y-8">
@@ -344,23 +343,30 @@ useEffect(() => {
                 {appointment.reason}
               </p>
 
-              <button
-                onClick={() =>
-                  completeAppointment(
-                    appointment._id
-                  )
-                }
-                className="
-                mt-5
-                rounded-xl
-                bg-green-600
-                px-5
-                py-2.5
-                text-white
-              "
-              >
-                Mark Completed
-              </button>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/counselor/chat"
+                  className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+                >
+                  💬 Open Chat
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => completeAppointment(appointment._id)}
+                  className="rounded-xl bg-green-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-green-700"
+                >
+                  Mark Completed
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => cancelAppointment(appointment._id)}
+                  className="rounded-xl border border-red-200 bg-white px-5 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-50"
+                >
+                  Cancel Session
+                </button>
+              </div>
 
             </div>
 

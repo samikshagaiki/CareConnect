@@ -57,12 +57,9 @@ export async function PATCH(
       );
     }
 
-    appointment.sessionStatus =
-      "completed";
-
-    appointment.completedAt =
-      new Date();
-
+    appointment.status = "completed";
+    appointment.sessionStatus = "completed";
+    appointment.completedAt = new Date();
     await appointment.save();
 
     await createNotification({

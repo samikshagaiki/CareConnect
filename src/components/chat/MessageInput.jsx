@@ -18,15 +18,20 @@ export default function MessageInput({
   // Receiver
   //-----------------------------------------
 
- const receiverId =
-  conversation.patient?.userId?.toString() ===
-  userId.toString()
-    ? conversation.counselor?.userId
-    : conversation.patient?.userId;
+  const receiverId =
+    conversation.patient?.userId?.toString() === userId.toString()
+      ? conversation.counselor?.userId
+      : conversation.patient?.userId;
 
-if (!receiverId) {
-  return null;
-}
+  useEffect(() => {
+    return () => {
+      clearTimeout(typingTimeout.current);
+    };
+  }, []);
+
+  if (!receiverId) {
+    return null;
+  }
 
   //-----------------------------------------
   // Typing
@@ -130,19 +135,7 @@ if (!receiverId) {
     }
   }
 
-  //-----------------------------------------
 
-  useEffect(() => {
-
-    return () => {
-
-      clearTimeout(
-        typingTimeout.current
-      );
-
-    };
-
-  }, []);
 
   //-----------------------------------------
 

@@ -1,213 +1,183 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft, Loader2, AlertCircle } from "lucide-react";
 
 export default function AssessmentPage() {
   const params = useParams();
+  const assignmentId = params?.assignmentId;
 
-  const assignmentId =
-    params?.assignmentId;
+  const [template, setTemplate] = useState(null);
+  const [answers, setAnswers] = useState([]);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const [template, setTemplate] =
-    useState(null);
-
-  const [answers, setAnswers] =
-    useState([]);
-
-  const [submitted, setSubmitted] =
-    useState(false);
-
-  const [loading, setLoading] =
-    useState(true);
-
-  async function fetchAssessment() {
+  const fetchAssessment = useCallback(async () => {
     try {
-      if (!assignmentId) {
-        return;
-      }
+      if (!assignmentId) return;
 
-      console.log(
-        "Assignment ID:",
-        assignmentId
+      const response = await fetch(
+        `/api/patient/assigned-assessments/${assignmentId}`
       );
+      const data = await response.json();
 
-      const response =
-        await fetch(
-          `/api/patient/assigned-assessments/${assignmentId}`
-        );
-
-      const data =
-        await response.json();
-
-      console.log(
-        "Assessment Data:",
-        data
-      );
-
-      if (data.success) {
-        setTemplate(
-          data.template
-        );
-
-        setAnswers(
-  new Array(
-    data.template.questions.length
-  ).fill(null)
-);
+      if (data.success && data.template) {
+        setTemplate(data.template);
+        setAnswers(new Array(data.template.questions.length).fill(null));
+      } else {
+        setErrorMessage(data.message || "Assessment could not be loaded.");
       }
     } catch (error) {
       console.error(error);
+      setErrorMessage("Network error while loading assessment.");
     } finally {
       setLoading(false);
     }
-  }
+  }, [assignmentId]);
 
- useEffect(() => {
+  useEffect(() => {
+    if (assignmentId) {
+      fetchAssessment();
+    }
+  }, [assignmentId, fetchAssessment]);
 
-  async function markNotificationsRead() {
-
-    await fetch(
-      "/api/notifications/read",
-      {
-        method: "PATCH",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify({
-          type: "assessment",
-        }),
+  useEffect(() => {
+    async function markNotificationsRead() {
+      try {
+        await fetch("/api/notifications/read", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "assessment",
+          }),
+        });
+      } catch (e) {
+        console.error("Failed to mark assessment notifications read", e);
       }
-    );
+    }
 
-  }
+    markNotificationsRead();
+  }, []);
 
-  markNotificationsRead();
-
-}, []);
-
-  function updateAnswer(
-    index,
-    value
-  ) {
-    const updated =
-      [...answers];
-
-    updated[index] =
-      Number(value);
-
+  function updateAnswer(index, value) {
+    const updated = [...answers];
+    updated[index] = Number(value);
     setAnswers(updated);
   }
 
-  async function handleSubmit(
-    e
-  ) {
+  async function handleSubmit(e) {
     e.preventDefault();
 
+    if (submitting) return;
+
+    const unansweredCount = answers.filter((a) => a === null).length;
+    if (unansweredCount > 0) {
+      alert(`Please answer all questions before submitting (${unansweredCount} remaining).`);
+      return;
+    }
+
     try {
-      const response =
-        await fetch(
-          `/api/patient/assigned-assessments/${assignmentId}/submit`,
-          {
-            method: "POST",
+      setSubmitting(true);
+      const response = await fetch(
+        `/api/patient/assigned-assessments/${assignmentId}/submit`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            answers,
+          }),
+        }
+      );
 
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-
-            body: JSON.stringify({
-              answers,
-            }),
-          }
-        );
-
-      const data =
-        await response.json();
+      const data = await response.json();
 
       if (data.success) {
         setSubmitted(true);
       } else {
-        alert(
-          "Failed to submit assessment."
-        );
+        alert(data.message || "Failed to submit assessment.");
       }
     } catch (error) {
       console.error(error);
-
-      alert(
-        "Something went wrong."
-      );
+      alert("Something went wrong submitting your assessment.");
+    } finally {
+      setSubmitting(false);
     }
   }
 
   if (loading) {
     return (
-      <div>
-        Loading...
+      <div className="max-w-4xl mx-auto py-12">
+        <div className="rounded-[32px] bg-white border border-slate-200 p-12 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-50 text-purple-600">
+            <Loader2 className="animate-spin" size={28} />
+          </div>
+          <h2 className="mt-5 text-xl font-bold text-slate-800">Loading Assessment...</h2>
+          <p className="mt-2 text-slate-500">Preparing your wellness questions</p>
+        </div>
       </div>
     );
   }
 
   if (!template) {
     return (
-      <div>
-        Assessment not found.
+      <div className="max-w-4xl mx-auto py-12">
+        <div className="rounded-[32px] bg-white border border-slate-200 p-12 text-center shadow-sm">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-500">
+            <AlertCircle size={28} />
+          </div>
+          <h2 className="mt-5 text-2xl font-bold text-slate-800">Assessment Unavailable</h2>
+          <p className="mt-2 text-slate-500">{errorMessage || "This assessment could not be found or has expired."}</p>
+          <div className="mt-6">
+            <Link
+              href="/patient/assessments"
+              className="inline-flex items-center gap-2 rounded-2xl bg-slate-900 px-6 py-3 font-semibold text-white transition hover:bg-slate-800"
+            >
+              <ArrowLeft size={18} /> Back to Assessments
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (submitted) {
-  return (
-    <div className="max-w-3xl mx-auto">
-
-      <div
-        className="
-        rounded-[40px]
-        bg-white
-        border
-        border-purple-100
-        shadow-xl
-        p-12
-        text-center
-      "
-      >
-
-        <div
-          className="
-          mx-auto
-          flex
-          h-28
-          w-28
-          items-center
-          justify-center
-          rounded-full
-          bg-linear-to-r
-          from-[#8EC5FC]
-          to-[#DCCCFD]
-          text-5xl
-        "
-        >
-          🎉
+    return (
+      <div className="max-w-3xl mx-auto py-8">
+        <div className="rounded-[40px] bg-white border border-purple-100 shadow-xl p-12 text-center">
+          <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-linear-to-r from-[#8EC5FC] to-[#DCCCFD] text-5xl">
+            🎉
+          </div>
+          <h1 className="mt-8 text-4xl font-bold">Assessment Submitted</h1>
+          <p className="mt-4 text-slate-500 text-lg">
+            Thank you for completing your assessment. Your responses have been securely shared with your counselor.
+          </p>
+          <div className="mt-8 flex justify-center gap-4">
+            <Link
+              href="/patient/dashboard"
+              className="rounded-2xl bg-purple-600 px-6 py-3 font-semibold text-white shadow-md transition hover:bg-purple-700"
+            >
+              Go to Dashboard
+            </Link>
+            <Link
+              href="/patient/assessments"
+              className="rounded-2xl border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition hover:bg-slate-50"
+            >
+              View Assessments
+            </Link>
+          </div>
         </div>
-
-        <h1 className="mt-8 text-4xl font-bold">
-          Assessment Submitted
-        </h1>
-
-        <p className="mt-4 text-slate-500 text-lg">
-          Thank you for completing your assessment.
-          Your responses have been shared with your counselor.
-        </p>
-
       </div>
+    );
+  }
 
-    </div>
-  );
-}
 
   return (
   <div className="max-w-5xl mx-auto space-y-8">

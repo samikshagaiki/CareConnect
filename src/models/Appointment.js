@@ -50,8 +50,13 @@ const AppointmentSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
+
+AppointmentSchema.index({ patientId: 1, appointmentDate: 1, sessionStatus: 1 });
+AppointmentSchema.index({ counselorId: 1, appointmentDate: 1, sessionStatus: 1 });
+AppointmentSchema.index({ patientId: 1, status: 1 });
+AppointmentSchema.index({ counselorId: 1, status: 1 });
 
 export default mongoose.models.Appointment ||
   mongoose.model("Appointment", AppointmentSchema);

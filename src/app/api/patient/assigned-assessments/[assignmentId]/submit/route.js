@@ -9,49 +9,37 @@ import AssessmentResponse from "@/models/AssessmentResponse";
 
 import { createNotification } from "@/lib/createNotification";
 
-export async function POST(
-  request,
-  context
-) {
+export async function POST(request, context) {
   try {
-    const session =
-      await getServerSession(
-        authOptions
+    const session = await getServerSession(authOptions);
+
+    if (!session || session.user.role !== "patient") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        {
+          status: 403,
+        }
       );
+    }
 
     await connectDB();
 
-    const body =
-      await request.json();
+    const body = await request.json();
+    const { assignmentId } = await context.params;
 
-    const { assignmentId } =
-      await context.params;
-
-    const assignment =
-      await AssessmentAssignment.findById(
-        assignmentId
-      );
-
-    if (
-  assignment.status ===
-  "completed"
-) {
-  return NextResponse.json(
-    {
-      success: false,
-      message:
-        "Assessment already submitted",
-    },
-    {
-      status: 400,
-    }
-  );
-}
+    const assignment = await AssessmentAssignment.findOne({
+      _id: assignmentId,
+      patientId: session.user.id,
+    });
 
     if (!assignment) {
       return NextResponse.json(
         {
           success: false,
+          message: "Assignment not found",
         },
         {
           status: 404,
@@ -59,59 +47,51 @@ export async function POST(
       );
     }
 
-    
-    const response =
-  await AssessmentResponse.create({
-    templateId:
-      assignment.templateId,
+    if (assignment.status === "completed") {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Assessment already submitted",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
 
-    patientId:
-      session.user.id,
+    const response = await AssessmentResponse.create({
+      templateId: assignment.templateId,
+      patientId: session.user.id,
+      assignedBy: assignment.counselorId,
+      answers: body.answers || [],
+      status: "completed",
+      submittedAt: new Date(),
+    });
 
-    assignedBy:
-      assignment.counselorId,
-
-    answers:
-      body.answers,
-
-    status:
-      "completed",
-
-    submittedAt:
-      new Date(),
-  });
-
-    assignment.status =
-      "completed";
-
+    assignment.status = "completed";
     await assignment.save();
 
-    await createNotification({
-  userId:
-    assignment.counselorId,
-
-  type:
-    "assessment",
-
-  title:
-    "Assessment Submitted",
-
-  message:
-    "A patient has submitted an assessment.",
-
-  referenceId:
-    response._id.toString(),
-});
+    if (assignment.counselorId) {
+      await createNotification({
+        userId: assignment.counselorId,
+        type: "assessment",
+        title: "Assessment Submitted",
+        message: "A patient has submitted an assessment.",
+        referenceId: response._id.toString(),
+      });
+    }
 
     return NextResponse.json({
       success: true,
+      responseId: response._id.toString(),
     });
   } catch (error) {
-    console.error(error);
+    console.error("Assessment submit error:", error);
 
     return NextResponse.json(
       {
         success: false,
+        message: "Failed to submit assessment",
       },
       {
         status: 500,

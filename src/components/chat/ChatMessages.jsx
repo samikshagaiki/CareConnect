@@ -51,9 +51,7 @@ messages.length > 1
     return current.toLocaleDateString();
   }
 
-  let previousDate = "";
-
- return (
+  return (
   <div
     className="
       flex
@@ -74,14 +72,10 @@ messages.length > 1
         lg:px-8
       "
     >
-      {messages.map((message) => {
-        const currentDate =
-          getDateLabel(message.createdAt);
-
-        const showDate =
-          currentDate !== previousDate;
-
-        previousDate = currentDate;
+      {messages.map((message, index) => {
+        const currentDate = getDateLabel(message.createdAt);
+        const prevDate = index > 0 ? getDateLabel(messages[index - 1].createdAt) : null;
+        const showDate = index === 0 || currentDate !== prevDate;
 
         return (
           <div key={message._id}>

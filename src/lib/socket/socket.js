@@ -10,12 +10,12 @@ export function getSocket() {
 
     socket = io( process.env.NEXT_PUBLIC_SOCKET_URL, {
 
-      transports: ["websocket"],
-
+      transports: ["websocket", "polling"],
       reconnection: true,
-
-      reconnectionAttempts: Infinity,
-
+      reconnectionAttempts: 5,
+      reconnectionDelay: 3000,
+      reconnectionDelayMax: 10000,
+      timeout: 5000,
     });
 
     socket.on("connect", () => {

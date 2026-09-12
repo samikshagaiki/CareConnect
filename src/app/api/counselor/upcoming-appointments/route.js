@@ -50,42 +50,33 @@ export async function GET() {
       }
     );
 
-    // Fetch only future appointments
+    // Fetch upcoming appointments (both pending confirmation and accepted)
+    const appointments = await Appointment.find({
+      counselorId: session.user.id,
+      status: { $in: ["pending", "accepted"] },
+      sessionStatus: "upcoming",
+      appointmentDate: {
+        $gte: new Date(),
+      },
+    })
+      .sort({ appointmentDate: 1 })
+      .lean();
 
-    const appointments =
-      await Appointment.find({
-        counselorId:
-          session.user.id,
+    const enriched = await Promise.all(
+      appointments.map(async (appointment) => {
+        const patient = await PatientProfile.findOne({
+          userId: appointment.patientId,
+        }).lean();
 
-        status: "accepted",
-
-        sessionStatus:
-          "upcoming",
-
-        appointmentDate: {
-          $gt: new Date(),
-        },
-      }).lean();
-
-    const enriched =
-      await Promise.all(
-        appointments.map(
-          async (
-            appointment
-          ) => {
-            const patient =
-              await PatientProfile.findOne({
-                userId:
-                  appointment.patientId,
-              }).lean();
-
-            return {
-              ...appointment,
-              patient,
-            };
-          }
-        )
-      );
+        return {
+          ...appointment,
+          patient: patient || {
+            anonymousName: "Patient",
+            userId: appointment.patientId,
+          },
+        };
+      })
+    );
 
     return NextResponse.json({
       success: true,

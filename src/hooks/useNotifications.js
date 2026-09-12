@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getSocket } from "@/lib/socket/socket";
 
 export default function useNotifications() {
-
   const [counts, setCounts] = useState({
     chat: 0,
     appointment: 0,
@@ -14,31 +13,18 @@ export default function useNotifications() {
     system: 0,
   });
 
-  async function fetchNotifications() {
-
+  const fetchNotifications = useCallback(async () => {
     try {
+      const response = await fetch("/api/notifications/count");
+      const data = await response.json();
 
-      const response =
-        await fetch(
-          "/api/notifications/count"
-        );
-
-      const data =
-        await response.json();
-
-      if (data.success) {
-
+      if (data.success && data.counts) {
         setCounts(data.counts);
-
       }
-
     } catch (error) {
-
-      console.error(error);
-
+      console.error("Failed to fetch notification counts:", error);
     }
-
-  }
+  }, []);
 
   useEffect(() => {
 
